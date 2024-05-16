@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Carousel } from "antd"; // Import Carousel and Image for displaying multiple images
+import { Carousel } from "antd";
 import axios from "axios";
 import { Layout } from "antd";
 import { Col, Row } from "antd";
+import moment from "moment";
+import Loading from "./Loading";
 
 const { Content } = Layout;
 const contentStyle = {
@@ -23,10 +25,12 @@ const WatchDetail = () => {
   let { id } = useParams();
   const [watchData, setWatchData] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/watch/${id}`
@@ -34,19 +38,39 @@ const WatchDetail = () => {
         setWatchData(response.data);
       } catch (error) {
         console.error("Error fetching watch details: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [id]);
 
-  if (!watchData) {
-    return <div>Loading watch details...</div>;
-  }
+  // if (!watchData) {
+  //   return <div>Cannot find the item...</div>;
+  // }
+
   const handleThumbnailClick = (index) => {
     setCurrentSlide(index);
     carouselRef.current.goTo(index);
   };
+
+  const getTimeSincePost = (postDate) => {
+    const now = moment();
+    const postDateMoment = moment(postDate);
+    const duration = moment.duration(now.diff(postDateMoment));
+
+    if (duration.asMinutes() < 60) {
+      return `${Math.floor(duration.asMinutes())} minutes ago`;
+    } else if (duration.asHours() < 24) {
+      return `${Math.floor(duration.asHours())} hours ago`;
+    } else {
+      return `${Math.floor(duration.asDays())} days ago`;
+    }
+  };
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Content
@@ -91,11 +115,15 @@ const WatchDetail = () => {
             ))}
           </div>
         </Col>
+
         <Col span={10}>
           <h1>{watchData.name}</h1>
           <span className="item-price">
             Price: {watchData.price.toLocaleString()} đ
           </span>
+          <div>
+            <strong>Posted: </strong> {getTimeSincePost(watchData.postDate)}
+          </div>
         </Col>
       </Row>
       <div className="watch-description">
@@ -107,32 +135,32 @@ const WatchDetail = () => {
         <div className="appraisal">
           <Row className="row">
             <Col span={12}>
-              <span>Hand</span>
+              <span className="attribute">Hand</span>
               <br></br>
               <span>good</span>
             </Col>
             <Col span={12}>
-              <span>Crown </span> <br></br>
+              <span className="attribute">Crown </span> <br></br>
               <span>good</span>
             </Col>
           </Row>
           <Row className="row">
             <Col span={12}>
-              <span>Case </span> <br></br>
+              <span className="attribute">Case </span> <br></br>
               <span>good</span>
             </Col>
             <Col span={12}>
-              <span>Bralet </span> <br></br>
-              <span>good</span>
+              <span className="attribute">Bralet </span> <br></br>
+              <span>solid</span>
             </Col>
           </Row>
           <Row className="row">
             <Col span={12}>
-              <span>Crystal </span> <br></br>
-              <span>good</span>
+              <span className="attribute">Crystal </span> <br></br>
+              <span>nice</span>
             </Col>
             <Col span={12}>
-              <span>Bralet </span> <br></br>
+              <span className="attribute">Bralet </span> <br></br>
               <span>good</span>
             </Col>
           </Row>

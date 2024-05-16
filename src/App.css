@@ -37,7 +37,14 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #e0e0e0;
 }
-.watch-description .appraisal .row span {
+.watch-description .appraisal .row .attribute {
   color: #595959;
-  font-size: 15px;
+  font-size: 18px;
+}
+.thumbnails {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 10px 0;
 }

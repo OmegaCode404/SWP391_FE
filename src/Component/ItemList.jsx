@@ -2,18 +2,25 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Row } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "./Loading";
+
 const ItemList = () => {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(
           "https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/watch"
         );
         setItems(response.data.map((item) => ({ ...item, url: item.url[0] })));
       } catch (error) {
         console.error("Error fetching data: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -23,6 +30,9 @@ const ItemList = () => {
   const handleItemClick = (id) => {
     navigate(`/watch/${id}`);
   };
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Row gutter={16}>
