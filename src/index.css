@@ -11,16 +11,4 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-.item-cover-image {
-  height: 200px; /* Adjust height as needed */
-  width: 100%; /* Ensures proportional scaling */
-  object-fit: cover; /* Maintains aspect ratio */
-}
-.item-price {
-  color: #d0021b;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.33;
-  margin: 2px 4px 0 0;
-}
+

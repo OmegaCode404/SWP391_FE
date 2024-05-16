@@ -5,43 +5,32 @@ import ItemList from "./ItemList";
 import HeaderBar from "./Header";
 
 const { Content, Footer } = Layout;
-const App = () => {
+const MainPage = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <HeaderBar />
-      <Content
+    <Content
+      style={{
+        padding: "0 200px",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Banner />
+      <div
         style={{
-          padding: "0 200px",
+          padding: 24,
           flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
         }}
       >
-        <Banner />
-        <div
-          style={{
-            padding: 24,
-            flexGrow: 1,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          <ItemList />
-        </div>
-      </Content>
-      <Footer
-        style={{
-          textAlign: "center",
-        }}
-      >
-        Antique Watch Hub
-      </Footer>
-    </Layout>
+        <ItemList />
+      </div>
+    </Content>
   );
 };
 
-export default App;
+export default MainPage;

@@ -4,23 +4,18 @@ import { AudioOutlined } from "@ant-design/icons";
 import { Input, Space } from "antd";
 import { Col, Row } from "antd";
 import { Image } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
-const labels = ["Home", "About us", "Login"];
-const items = labels.map((label, index) => ({
-  key: String(index + 1),
-  label,
-}));
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: "#1677ff",
-    }}
-  />
-);
+
 const onSearch = (value, _e, info) => console.log(info?.source, value);
+
 const HeaderBar = () => {
+  const navigate = useNavigate();
+  const handleClick = (item) => {
+    const path = item.key.toLowerCase();
+    navigate(`/${path === "home" ? "" : path}`);
+  };
   return (
     <Header
       style={{
@@ -42,13 +37,17 @@ const HeaderBar = () => {
         <Menu
           theme="dark"
           mode="horizontal"
-          defaultSelectedKeys={["2"]}
-          items={items}
+          defaultSelectedKeys={["1"]}
+          onClick={handleClick}
           style={{
             flex: 1,
             minWidth: 0,
           }}
-        />
+        >
+          <Menu.Item key="home">Home</Menu.Item>
+          <Menu.Item key="about">About us</Menu.Item>
+          <Menu.Item key="login">Login</Menu.Item>
+        </Menu>
       </Col>
       <Col span={16}>
         <Search
