@@ -46,7 +46,7 @@ const HeaderBar = () => {
         >
           <Menu.Item key="home">Home</Menu.Item>
           <Menu.Item key="about">About us</Menu.Item>
-          <Menu.Item key="Register">Register</Menu.Item>
+          <Menu.Item key="register">Register for appraisal</Menu.Item>
         </Menu>
       </Col>
       <Col span={16}>
