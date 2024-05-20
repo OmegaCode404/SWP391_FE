@@ -3,6 +3,7 @@ import { Breadcrumb, Layout, Menu, theme } from "antd";
 import Banner from "./Banner";
 import ItemList from "./ItemList";
 import HeaderBar from "./Header";
+import WatchTypeList from "./WatchTypeList";
 
 const { Content, Footer } = Layout;
 const MainPage = () => {
@@ -27,6 +28,7 @@ const MainPage = () => {
           borderRadius: borderRadiusLG,
         }}
       >
+        <WatchTypeList />
         <ItemList />
       </div>
     </Content>

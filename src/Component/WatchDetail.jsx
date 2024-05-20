@@ -6,13 +6,14 @@ import { Layout } from "antd";
 import { Col, Row } from "antd";
 import moment from "moment";
 import Loading from "./Loading";
+import { Image } from "antd";
+import { Typography, Divider } from "antd";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
+const { Title, Text } = Typography;
 const { Content } = Layout;
-const contentStyle = {
-  height: "300px",
-  objectFit: "cover",
-  margin: "0 auto",
-};
+
 const thumbnailStyle = {
   height: "100px",
   width: "100px",
@@ -95,7 +96,7 @@ const WatchDetail = () => {
                   key={imageUrl}
                   src={imageUrl}
                   alt={watchData.name}
-                  style={contentStyle}
+                  className="contentStyle"
                 />
               </div>
             ))}
@@ -118,11 +119,35 @@ const WatchDetail = () => {
 
         <Col span={10}>
           <h1>{watchData.name}</h1>
-          <span className="item-price">
-            Price: {watchData.price.toLocaleString()} đ
-          </span>
-          <div>
-            <strong>Posted: </strong> {getTimeSincePost(watchData.postDate)}
+          <div style={{ marginBottom: "10px" }}>
+            <Text strong style={{ fontSize: "16px" }}>
+              Price:{" "}
+            </Text>
+            <Text style={{ fontSize: "16px", color: "#ff4d4f" }}>
+              {watchData.price.toLocaleString()} đ
+            </Text>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <Text strong style={{ fontSize: "16px" }}>
+              Posted:{" "}
+            </Text>
+            <Text style={{ fontSize: "16px" }}>
+              {getTimeSincePost(watchData.postDate)}
+            </Text>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <Text strong style={{ fontSize: "16px" }}>
+              Seller:{" "}
+            </Text>
+            <Text style={{ fontSize: "16px" }}>{watchData?.seller.name}</Text>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <Text strong style={{ fontSize: "16px" }}>
+              Appraised by:{" "}
+            </Text>
+            <Text style={{ fontSize: "16px" }}>
+              {watchData?.appraiser.name}
+            </Text>
           </div>
         </Col>
       </Row>

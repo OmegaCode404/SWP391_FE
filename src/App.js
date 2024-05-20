@@ -6,6 +6,7 @@ import Footer from "./Component/Footer";
 import Layout from "antd/es/layout/layout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WatchDetail from "./Component/WatchDetail";
+import WatchFilter from "./Component/WatchFilter";
 const App = () => {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/watch/:id" element={<WatchDetail />} />
+          <Route path="/filter/:type" element={<WatchFilter />} />
         </Routes>
         <Footer />
       </Layout>
