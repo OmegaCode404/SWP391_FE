@@ -72,7 +72,7 @@ const WatchFilter = () => {
     >
       <WatchTypeList />
       <Select
-        defaultValue="ascending"
+        defaultValue="Sort by price"
         style={{ width: 170, marginBottom: 20 }}
         onChange={handleSortChange}
         options={[

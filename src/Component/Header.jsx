@@ -33,7 +33,7 @@ const HeaderBar = () => {
           height={60}
         />
       </Col>
-      <Col span={5}>
+      <Col span={6}>
         <Menu
           theme="dark"
           mode="horizontal"
@@ -46,10 +46,12 @@ const HeaderBar = () => {
         >
           <Menu.Item key="home">Home</Menu.Item>
           <Menu.Item key="about">About us</Menu.Item>
-          <Menu.Item key="registerforappraisal">Register for appraisal</Menu.Item>
+          <Menu.Item key="registerforappraisal">
+            Register for appraisal
+          </Menu.Item>
         </Menu>
       </Col>
-      <Col span={16}>
+      <Col span={15}>
         <Search
           placeholder="Input watch name here"
           onSearch={onSearch}

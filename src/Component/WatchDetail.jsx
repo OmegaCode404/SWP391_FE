@@ -6,7 +6,7 @@ import { Layout } from "antd";
 import { Col, Row } from "antd";
 import moment from "moment";
 import Loading from "./Loading";
-import { Image } from "antd";
+import Rating from "./Rating";
 import { Typography, Divider } from "antd";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
@@ -92,12 +92,16 @@ const WatchDetail = () => {
           >
             {watchData.url.map((imageUrl) => (
               <div>
-                <img
-                  key={imageUrl}
-                  src={imageUrl}
-                  alt={watchData.name}
-                  className="contentStyle"
-                />
+                <PhotoProvider>
+                  <PhotoView src={imageUrl}>
+                    <img
+                      key={imageUrl}
+                      src={imageUrl}
+                      alt={watchData.name}
+                      className="contentStyle"
+                    />
+                  </PhotoView>
+                </PhotoProvider>
               </div>
             ))}
           </Carousel>
@@ -140,6 +144,9 @@ const WatchDetail = () => {
               Seller:{" "}
             </Text>
             <Text style={{ fontSize: "16px" }}>{watchData?.seller.name}</Text>
+            {" ("}
+            <Rating score={watchData?.seller.rating}></Rating>
+            {")"}
           </div>
           <div style={{ marginBottom: "10px" }}>
             <Text strong style={{ fontSize: "16px" }}>

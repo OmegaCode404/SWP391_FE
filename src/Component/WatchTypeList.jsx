@@ -15,8 +15,8 @@ import {
 const watchTypes = [
   { name: "Mechanical", icon: faGear },
   { name: "Automatic", icon: faTachometerAlt },
-  { name: "Digital", icon: faClock },
-  { name: "SmartWatch", icon: faCompass },
+  { name: "Hybrid", icon: faClock },
+  { name: "Chronograph", icon: faCompass },
   { name: "Classic", icon: faStopwatch },
   { name: "Luxury", icon: faStar },
 ];
