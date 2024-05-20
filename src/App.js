@@ -7,6 +7,9 @@ import Layout from "antd/es/layout/layout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WatchDetail from "./Component/WatchDetail";
 import WatchFilter from "./Component/WatchFilter";
+import RegisterForAppraisal from "./Component/RegisterForAppraisal/RegisterForAppraisal";
+import RegisterForAppraisal from "./Component/RegisterForAppraisal/RegisterForAppraisal";
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -16,6 +19,14 @@ const App = () => {
           <Route path="/" element={<MainPage />} />
           <Route path="/watch/:id" element={<WatchDetail />} />
           <Route path="/filter/:type" element={<WatchFilter />} />
+          <Route
+            path="/registerforappraisal"
+            element={<RegisterForAppraisal />}
+          />
+          <Route
+            path="/registerforappraisal"
+            element={<RegisterForAppraisal />}
+          />
         </Routes>
         <Footer />
       </Layout>
