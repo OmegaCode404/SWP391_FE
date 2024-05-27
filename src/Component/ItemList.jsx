@@ -55,7 +55,7 @@ const ItemList = () => {
         <Col key={item.id} span={6}>
           <Card
             hoverable
-            title={item.name}
+            title={"Title: " + item.name}
             bordered={true}
             onClick={() => handleItemClick(item.id)}
             cover={
@@ -68,11 +68,11 @@ const ItemList = () => {
           >
             <div>
               <span className="item-price">
-                {item.price.toLocaleString()} đ
+                Price: {item.price.toLocaleString()} đ
               </span>
             </div>
             <div className="item-details">
-              <span className="item-seller">Seller: {item.seller.name}</span>
+              <span className="item-seller">{item.seller.name}</span>
               <span className="item-post-date">
                 {getTimeSincePost(item.postDate)}
               </span>

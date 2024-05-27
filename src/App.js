@@ -8,6 +8,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WatchDetail from "./Component/WatchDetail";
 import WatchFilter from "./Component/WatchFilter";
 import RegisterForAppraisal from "./Component/RegisterForAppraisal/RegisterForAppraisal";
+import RegisterPost from "./Component/RegisterPost";
+import LoginPage from "./Component/Login";
 
 const App = () => {
   return (
@@ -18,6 +20,8 @@ const App = () => {
           <Route path="/" element={<MainPage />} />
           <Route path="/watch/:id" element={<WatchDetail />} />
           <Route path="/filter/:type" element={<WatchFilter />} />
+          <Route path="/upload" element={<RegisterPost />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route
             path="/registerforappraisal"
             element={<RegisterForAppraisal />}

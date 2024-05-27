@@ -4,6 +4,7 @@
   object-fit: cover; /* Maintains aspect ratio */
 }
 .item-price {
+  content: "Posted: ";
   color: #d0021b;
   display: inline-block;
   font-size: 14px;
@@ -57,12 +58,15 @@
 .item-seller,
 .item-post-date {
   font-size: 14px;
-  color: #888;
   margin-bottom: 5px;
 }
 
 .item-post-date::before {
-  content: "Posted: ";
+  content: "Since: ";
+  font-weight: bold;
+}
+.item-seller::before {
+  content: "Posted by: ";
   font-weight: bold;
 }
 .contentStyle {

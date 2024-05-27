@@ -93,7 +93,11 @@ const WatchFilter = () => {
         <Row gutter={[16, 16]}>
           {watches.map((watch) => (
             <Col key={watch.id} span={24}>
-              <Card hoverable onClick={() => handleItemClick(watch.id)}>
+              <Card
+                style={{ backgroundColor: "#e3cbcb" }}
+                hoverable
+                onClick={() => handleItemClick(watch.id)}
+              >
                 <Row gutter={16} align="middle">
                   <Col span={8}>
                     <img
