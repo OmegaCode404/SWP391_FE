@@ -4,16 +4,19 @@ import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import Rating from "./Rating";
+import Loading from "./Loading";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
 
 const Profile = () => {
+  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/user/1"
@@ -21,6 +24,8 @@ const Profile = () => {
         setUserData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -30,6 +35,9 @@ const Profile = () => {
   const handleEditProfile = () => {
     navigate("/edit-profile");
   };
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Content

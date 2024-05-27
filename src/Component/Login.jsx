@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, theme, ConfigProvider } from "antd";
 import { Button, Form, Input, Checkbox, Typography } from "antd";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -103,6 +104,9 @@ const LoginPage = () => {
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
+              <Link style={{ marginLeft: "90px" }} to="/register">
+                Don't have an accout? Register here!
+              </Link>
             </Form.Item>
           </Form>
         </div>

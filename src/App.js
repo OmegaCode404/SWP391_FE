@@ -7,7 +7,7 @@ import Layout from "antd/es/layout/layout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WatchDetail from "./Component/WatchDetail";
 import WatchFilter from "./Component/WatchFilter";
-import RegisterForAppraisal from "./Component/RegisterForAppraisal/RegisterForAppraisal";
+import Register from "./Component/Register";
 import RegisterPost from "./Component/RegisterPost";
 import LoginPage from "./Component/Login";
 import Profile from "./Component/Profile";
@@ -26,10 +26,7 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
-          <Route
-            path="/registerforappraisal"
-            element={<RegisterForAppraisal />}
-          />
+          <Route path="/register" element={<Register />} />
         </Routes>
         <Footer />
       </Layout>

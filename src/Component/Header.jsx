@@ -43,9 +43,6 @@ const HeaderBar = () => {
         >
           <Menu.Item key="home">Home</Menu.Item>
           <Menu.Item key="about">About us</Menu.Item>
-          <Menu.Item key="registerforappraisal">
-            Register for appraisal
-          </Menu.Item>
           <Menu.Item key="upload">Upload post</Menu.Item>
           <Menu.Item key="login">Login</Menu.Item>
         </Menu>
