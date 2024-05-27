@@ -74,3 +74,6 @@
   object-fit: cover !important;
   margin: 0 auto !important;
 }
+.formTitle {
+  text-align: center;
+}

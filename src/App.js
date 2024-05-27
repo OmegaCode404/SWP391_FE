@@ -10,6 +10,8 @@ import WatchFilter from "./Component/WatchFilter";
 import RegisterForAppraisal from "./Component/RegisterForAppraisal/RegisterForAppraisal";
 import RegisterPost from "./Component/RegisterPost";
 import LoginPage from "./Component/Login";
+import Profile from "./Component/Profile";
+import EditProfile from "./Component/EditProfile";
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
           <Route path="/filter/:type" element={<WatchFilter />} />
           <Route path="/upload" element={<RegisterPost />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
           <Route
             path="/registerforappraisal"
             element={<RegisterForAppraisal />}

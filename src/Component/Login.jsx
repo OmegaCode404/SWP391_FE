@@ -36,7 +36,7 @@ const LoginPage = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Title type="success" level={2}>
+          <Title className="formTitle" type="success" level={2}>
             Login
           </Title>
           <Form

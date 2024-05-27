@@ -1,21 +1,21 @@
-import { Menu } from "antd";
-import { Header } from "antd/es/layout/layout";
-import { AudioOutlined } from "@ant-design/icons";
-import { Input, Space } from "antd";
-import { Col, Row } from "antd";
-import { Image } from "antd";
+import React from "react";
+import { Menu, Layout, Input, Col, Image } from "antd";
 import { useNavigate } from "react-router-dom";
+import AvatarDropdown from "./Avatar";
 
+const { Header } = Layout;
 const { Search } = Input;
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+const onSearch = (value) => console.log(value);
 
 const HeaderBar = () => {
   const navigate = useNavigate();
+
   const handleClick = (item) => {
     const path = item.key.toLowerCase();
     navigate(`/${path === "home" ? "" : path}`);
   };
+
   return (
     <Header
       style={{
@@ -39,10 +39,7 @@ const HeaderBar = () => {
           mode="horizontal"
           defaultSelectedKeys={["1"]}
           onClick={handleClick}
-          style={{
-            flex: 1,
-            minWidth: 0,
-          }}
+          style={{ flex: 1, minWidth: 0 }}
         >
           <Menu.Item key="home">Home</Menu.Item>
           <Menu.Item key="about">About us</Menu.Item>
@@ -53,15 +50,19 @@ const HeaderBar = () => {
           <Menu.Item key="login">Login</Menu.Item>
         </Menu>
       </Col>
-      <Col span={14}>
+      <Col span={11} style={{ display: "flex", alignItems: "center" }}>
         <Search
           placeholder="Input watch name here"
           onSearch={onSearch}
           enterButton
-          style={{ marginTop: "15px", width: "60%" }}
+          style={{ width: "60%" }}
         />
+        <div style={{ marginLeft: "auto", marginRight: "15px" }}>
+          <AvatarDropdown />
+        </div>
       </Col>
     </Header>
   );
 };
+
 export default HeaderBar;

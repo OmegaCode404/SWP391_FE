@@ -71,18 +71,18 @@ const RegisterPost = () => {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Title color="#c57071" level={2}>
+        <Title mark className="formTitle" color="#c57071" level={2}>
           UPLOAD WATCH FORM
         </Title>
         <Row gutter={[16, 16]}>
           <Col span={8}>
-            <Title type="success" level={2}>
+            <Title className="formTitle" type="success" level={2}>
               Upload Image here
             </Title>
             <ImageUpload onFilesSelected={handleFilesSelected} />
           </Col>
           <Col style={{ borderLeft: "solid 1px" }} span={16}>
-            <Title type="success" level={2}>
+            <Title className="formTitle" type="success" level={2}>
               Watch's information
             </Title>
             <Form
