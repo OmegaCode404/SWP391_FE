@@ -14,6 +14,7 @@ import LayoutCom from "./Component/Layout";
 import Cart from "./Component/Cart";
 import MyPost from "./Component/MyPost";
 import AboutUs from "./Component/AboutUs";
+import UserDetail from "./Component/UserProfile";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/My-Post" element={<MyPost />} />
         </Route>
         <Route path="/register" element={<Register />} />
+        <Route path="/user/:id" element={<UserDetail />} />
       </Route>
     </Routes>
   );

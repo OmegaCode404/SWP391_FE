@@ -12,6 +12,7 @@ import { useCart } from "../Context/CartContext";
 import useAuth from "./Hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 const { Content } = Layout;
@@ -177,10 +178,12 @@ const WatchDetail = () => {
             </Text>
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <Text strong style={{ fontSize: "16px" }}>
+            <Text style={{ fontSize: "16px" }}>
               Seller:{" "}
+              <Link to={`/user/${watchData.seller.id}`}>
+                {watchData?.seller.name}
+              </Link>
             </Text>
-            <Text style={{ fontSize: "16px" }}>{watchData?.seller.name}</Text>
             {" ("}
             <Rating score={watchData?.seller.rating}></Rating>
             {")"}
@@ -206,34 +209,47 @@ const WatchDetail = () => {
         <h2>Appraisal report</h2>
         <div className="appraisal">
           <Row className="row">
-            <Col span={12}>
-              <span className="attribute">Hand</span>
+            <Col span={8}>
+              <span className="attribute">Brand</span>
               <br></br>
-              <span>good</span>
+              <span>Rolex</span>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
+              <span className="attribute">Hand </span> <br></br>
+              <span>stick</span>
+            </Col>
+            <Col span={8}>
               <span className="attribute">Crown </span> <br></br>
               <span>good</span>
             </Col>
           </Row>
           <Row className="row">
-            <Col span={12}>
-              <span className="attribute">Case </span> <br></br>
-              <span>good</span>
+            <Col span={8}>
+              <span className="attribute">Model</span>
+              <br></br>
+              <span>Rolex Submariner</span>
             </Col>
-            <Col span={12}>
-              <span className="attribute">Bralet </span> <br></br>
+            <Col span={8}>
+              <span className="attribute">Case material </span> <br></br>
+              <span>steel</span>
+            </Col>
+            <Col span={8}>
+              <span className="attribute">Braclet </span> <br></br>
               <span>solid</span>
             </Col>
           </Row>
           <Row className="row">
-            <Col span={12}>
+            <Col span={8}>
               <span className="attribute">Crystal </span> <br></br>
               <span>nice</span>
             </Col>
-            <Col span={12}>
-              <span className="attribute">Bralet </span> <br></br>
+            <Col span={8}>
+              <span className="attribute">Dial </span> <br></br>
               <span>good</span>
+            </Col>
+            <Col span={8}>
+              <span className="attribute">Water resistance </span> <br></br>
+              <span>Yes</span>
             </Col>
           </Row>
         </div>
