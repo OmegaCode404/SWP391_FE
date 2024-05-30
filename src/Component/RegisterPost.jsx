@@ -79,7 +79,7 @@ const RegisterPost = () => {
             <Title className="formTitle" type="success" level={2}>
               Upload Image here
             </Title>
-            <ImageUpload onFilesSelected={handleFilesSelected} />
+            <ImageUpload onFilesSelected={handleFilesSelected} imgNum={8} />
           </Col>
           <Col style={{ borderLeft: "solid 1px" }} span={16}>
             <Title className="formTitle" type="success" level={2}>

@@ -2,6 +2,9 @@ import React from "react";
 import { Menu, Layout, Input, Col, Image } from "antd";
 import { useNavigate } from "react-router-dom";
 import AvatarDropdown from "./Avatar";
+import useAuth from "./Hooks/useAuth"; // Import useAuth hook
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -10,6 +13,7 @@ const onSearch = (value) => console.log(value);
 
 const HeaderBar = () => {
   const navigate = useNavigate();
+  const { auth } = useAuth(); // Use the useAuth hook to get authentication status
 
   const handleClick = (item) => {
     const path = item.key.toLowerCase();
@@ -43,8 +47,13 @@ const HeaderBar = () => {
         >
           <Menu.Item key="home">Home</Menu.Item>
           <Menu.Item key="about">About us</Menu.Item>
-          <Menu.Item key="upload">Upload post</Menu.Item>
-          <Menu.Item key="login">Login</Menu.Item>
+          {auth ? <Menu.Item key="upload">Upload post</Menu.Item> : null}
+          {auth ? (
+            <Menu.Item key="cart">
+              <FontAwesomeIcon size="lg" icon={faCartShopping} />{" "}
+            </Menu.Item>
+          ) : null}
+          {!auth ? <Menu.Item key="login">Login</Menu.Item> : null}
         </Menu>
       </Col>
       <Col span={11} style={{ display: "flex", alignItems: "center" }}>
@@ -54,9 +63,11 @@ const HeaderBar = () => {
           enterButton
           style={{ width: "60%" }}
         />
-        <div style={{ marginLeft: "auto", marginRight: "15px" }}>
-          <AvatarDropdown />
-        </div>
+        {auth ? (
+          <div style={{ marginLeft: "auto", marginRight: "15px" }}>
+            <AvatarDropdown />
+          </div>
+        ) : null}
       </Col>
     </Header>
   );

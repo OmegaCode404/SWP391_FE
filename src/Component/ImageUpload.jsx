@@ -9,7 +9,7 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const ImageUpload = ({ onFilesSelected }) => {
+const ImageUpload = ({ onFilesSelected, imgNum }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState([]);
@@ -53,7 +53,7 @@ const ImageUpload = ({ onFilesSelected }) => {
         onChange={handleChange}
         beforeUpload={handleBeforeUpload}
       >
-        {fileList.length >= 8 ? null : uploadButton}
+        {fileList.length >= imgNum ? null : uploadButton}
       </Upload>
       {previewImage && (
         <Image

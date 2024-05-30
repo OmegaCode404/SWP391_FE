@@ -1,43 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Layout, Col, Row, Typography, Avatar, Button } from "antd";
-import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import Rating from "./Rating";
 import Loading from "./Loading";
+import useAuth from "./Hooks/useAuth";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
 
 const Profile = () => {
-  const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const { auth } = useAuth(); // Use the useAuth hook
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/user/1"
-        );
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const handleEditProfile = () => {
     navigate("/edit-profile");
   };
-  if (loading) {
+
+  // If auth is still loading or if user data is not available, show a loading spinner
+  if (!auth) {
     return <Loading />;
   }
+
+  const { name, phone, email, avatarUrl, createdDate, rating } = auth;
 
   return (
     <Content
@@ -56,43 +41,41 @@ const Profile = () => {
           borderRadius: 16,
         }}
       >
-        {userData && (
-          <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <PhotoProvider>
-                <PhotoView src={userData.avatarUrl}>
-                  <Avatar src={userData.avatarUrl} size={250}></Avatar>
-                </PhotoView>
-              </PhotoProvider>
-            </Col>
-            <Col
-              style={{ borderLeft: "solid 1px #e8e8e8", paddingLeft: 24 }}
-              span={16}
-            >
-              <Title className="formTitle" level={2}>
-                User Information
-              </Title>
-              <Paragraph>
-                <strong>User Name:</strong> {userData.name}
-              </Paragraph>
-              <Paragraph>
-                <strong>Phone:</strong> {userData.phone}
-              </Paragraph>
-              <Paragraph>
-                <strong>Email:</strong> {userData.gmail}
-              </Paragraph>
-              <Paragraph>
-                <strong>Is a member since:</strong> {userData.createdDate}
-              </Paragraph>
-              <Paragraph>
-                <strong>Rating:</strong> <Rating score={userData.rating} />
-              </Paragraph>
-              <Button type="primary" onClick={handleEditProfile}>
-                Edit Profile
-              </Button>
-            </Col>
-          </Row>
-        )}
+        <Row gutter={[16, 16]}>
+          <Col span={8}>
+            <PhotoProvider>
+              <PhotoView src={avatarUrl}>
+                <Avatar src={avatarUrl} size={250}></Avatar>
+              </PhotoView>
+            </PhotoProvider>
+          </Col>
+          <Col
+            style={{ borderLeft: "solid 1px #e8e8e8", paddingLeft: 24 }}
+            span={16}
+          >
+            <Title className="formTitle" level={2}>
+              User Information
+            </Title>
+            <Paragraph>
+              <strong>User Name:</strong> {name}
+            </Paragraph>
+            <Paragraph>
+              <strong>Phone:</strong> {phone}
+            </Paragraph>
+            <Paragraph>
+              <strong>Email:</strong> {email}
+            </Paragraph>
+            <Paragraph>
+              <strong>Is a member since:</strong> {createdDate}
+            </Paragraph>
+            <Paragraph>
+              <strong>Rating:</strong> <Rating score={rating} />
+            </Paragraph>
+            <Button type="primary" onClick={handleEditProfile}>
+              Edit Profile
+            </Button>
+          </Col>
+        </Row>
       </div>
     </Content>
   );

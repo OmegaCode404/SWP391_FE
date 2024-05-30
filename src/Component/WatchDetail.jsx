@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
-import { Carousel } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
+import { Carousel, message } from "antd";
 import axios from "axios";
-import { Layout } from "antd";
-import { Col, Row } from "antd";
+import { Layout, Col, Row, Button, Typography } from "antd";
 import moment from "moment";
 import Loading from "./Loading";
 import Rating from "./Rating";
-import { Typography, Divider } from "antd";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
+import { useCart } from "../Context/CartContext";
+import useAuth from "./Hooks/useAuth";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Content } = Layout;
 
 const thumbnailStyle = {
@@ -28,6 +28,9 @@ const WatchDetail = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
+  const { auth } = useAuth();
+  const { state: cartState, dispatch } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,10 +50,6 @@ const WatchDetail = () => {
     fetchData();
   }, [id]);
 
-  // if (!watchData) {
-  //   return <div>Cannot find the item...</div>;
-  // }
-
   const handleThumbnailClick = (index) => {
     setCurrentSlide(index);
     carouselRef.current.goTo(index);
@@ -69,6 +68,41 @@ const WatchDetail = () => {
       return `${Math.floor(duration.asDays())} days ago`;
     }
   };
+
+  const addToCart = () => {
+    if (auth) {
+      const itemInCart = cartState.cartItems.find(
+        (item) => item.id === watchData.id
+      );
+      const itemsFromDifferentSeller = cartState.cartItems.some(
+        (item) => item.sellerId !== watchData.seller.id
+      );
+
+      if (itemInCart) {
+        message.info("This item is already in your cart.");
+      } else if (itemsFromDifferentSeller) {
+        message.info(
+          "You cannot add items from different sellers to the cart."
+        );
+      } else {
+        dispatch({
+          type: "ADD_TO_CART",
+          payload: {
+            id: watchData.id,
+            name: watchData.name,
+            price: watchData.price,
+            image: watchData.url[0],
+            sellerId: watchData.seller.id,
+          },
+        });
+        message.success("Added to cart successfully!");
+      }
+    } else {
+      message.info("You have to log in first!");
+      navigate("/login");
+    }
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -83,7 +117,7 @@ const WatchDetail = () => {
       }}
     >
       <Row style={{ backgroundColor: "#eee" }}>
-        <Col span={14}>
+        <Col span={12}>
           <Carousel
             ref={carouselRef}
             afterChange={(current) => setCurrentSlide(current)}
@@ -91,7 +125,7 @@ const WatchDetail = () => {
             initialSlide={currentSlide}
           >
             {watchData.url.map((imageUrl) => (
-              <div>
+              <div key={imageUrl}>
                 <PhotoProvider>
                   <PhotoView src={imageUrl}>
                     <img
@@ -121,7 +155,7 @@ const WatchDetail = () => {
           </div>
         </Col>
 
-        <Col span={10}>
+        <Col style={{ marginLeft: "20px" }} span={11}>
           <h1>{watchData.name}</h1>
           <div style={{ marginBottom: "10px" }}>
             <Text strong style={{ fontSize: "16px" }}>
@@ -156,6 +190,9 @@ const WatchDetail = () => {
               {watchData?.appraiser.name}
             </Text>
           </div>
+          <Button type="primary" onClick={addToCart}>
+            Add to Cart
+          </Button>
         </Col>
       </Row>
       <div className="watch-description">

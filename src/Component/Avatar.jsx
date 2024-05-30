@@ -1,10 +1,12 @@
 import React from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, Menu } from "antd";
-import { Navigate, useNavigate } from "react-router-dom"; // Ensure you're using React Router for navigation
+import { Navigate, useNavigate } from "react-router-dom";
+import useAuth from "./Hooks/useAuth";
 
 const AvatarDropdown = () => {
   const navigate = useNavigate();
+  const { auth } = useAuth();
 
   const menu = (
     <Menu
@@ -12,7 +14,7 @@ const AvatarDropdown = () => {
         if (e.key === "profile") {
           navigate("/profile"); // navigate to profile page
         } else if (e.key === "mypost") {
-          navigate("/mypost"); // navigate to my post page
+          navigate("/My-Post"); // navigate to my post page
         }
       }}
     >
@@ -23,11 +25,7 @@ const AvatarDropdown = () => {
 
   return (
     <Dropdown overlay={menu} placement="bottomRight">
-      <Avatar
-        size="large"
-        icon={<UserOutlined />}
-        style={{ cursor: "pointer" }}
-      />
+      <Avatar size="large" src={auth.avatarUrl} style={{ cursor: "pointer" }} />
     </Dropdown>
   );
 };
