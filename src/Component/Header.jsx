@@ -1,10 +1,17 @@
 import React from "react";
-import { Menu, Layout, Input, Col, Image } from "antd";
+import { Menu, Layout, Input, Col, Image, Popconfirm } from "antd";
 import { useNavigate } from "react-router-dom";
 import AvatarDropdown from "./Avatar";
 import useAuth from "./Hooks/useAuth"; // Import useAuth hook
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCartShopping,
+  faCircleInfo,
+  faHome,
+  faRightFromBracket,
+  faUpload,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -13,11 +20,21 @@ const onSearch = (value) => console.log(value);
 
 const HeaderBar = () => {
   const navigate = useNavigate();
-  const { auth } = useAuth(); // Use the useAuth hook to get authentication status
+  const { auth, setAuth } = useAuth(); // Use the useAuth hook to get authentication status and setAuth function
+
+  const handleLogout = () => {
+    setAuth(null);
+    navigate("/");
+  };
 
   const handleClick = (item) => {
-    const path = item.key.toLowerCase();
-    navigate(`/${path === "home" ? "" : path}`);
+    if (!item || !item.key) {
+      return;
+    }
+    if (item.key !== "logout") {
+      const path = item.key.toLowerCase();
+      navigate(`/${path === "home" ? "" : path}`);
+    }
   };
 
   return (
@@ -45,15 +62,43 @@ const HeaderBar = () => {
           onClick={handleClick}
           style={{ flex: 1, minWidth: 0 }}
         >
-          <Menu.Item key="home">Home</Menu.Item>
-          <Menu.Item key="about">About us</Menu.Item>
-          {auth ? <Menu.Item key="upload">Upload post</Menu.Item> : null}
+          <Menu.Item key="home">
+            <FontAwesomeIcon size="lg" icon={faHome} />
+            Home
+          </Menu.Item>
+          <Menu.Item key="about">
+            <FontAwesomeIcon size="lg" icon={faCircleInfo} />
+            About us
+          </Menu.Item>
           {auth ? (
-            <Menu.Item key="cart">
-              <FontAwesomeIcon size="lg" icon={faCartShopping} />{" "}
+            <Menu.Item key="upload">
+              <FontAwesomeIcon size="lg" icon={faUpload} /> Upload post
             </Menu.Item>
           ) : null}
-          {!auth ? <Menu.Item key="login">Login</Menu.Item> : null}
+          {auth ? (
+            <Menu.Item key="cart">
+              <FontAwesomeIcon size="lg" icon={faCartShopping} /> Your Cart{" "}
+            </Menu.Item>
+          ) : null}
+          {!auth ? (
+            <Menu.Item key="login">
+              <FontAwesomeIcon size="lg" icon={faUser} />
+              Login
+            </Menu.Item>
+          ) : null}
+          {auth ? (
+            <Popconfirm
+              title="Are you sure you want to logout?"
+              onConfirm={handleLogout}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Menu.Item key="logout">
+                {" "}
+                <FontAwesomeIcon size="lg" icon={faRightFromBracket} /> Logout
+              </Menu.Item>
+            </Popconfirm>
+          ) : null}
         </Menu>
       </Col>
       <Col span={11} style={{ display: "flex", alignItems: "center" }}>

@@ -5,6 +5,8 @@ import ImageUpload from "./ImageUpload";
 import { Col, Button, message, Row, Form, Input, Select } from "antd";
 import { useState } from "react";
 import { Typography } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
 const { Title } = Typography;
 const { Option } = Select;
 const { Content } = Layout;
@@ -72,7 +74,7 @@ const RegisterPost = () => {
         }}
       >
         <Title mark className="formTitle" color="#c57071" level={2}>
-          UPLOAD WATCH FORM
+          UPLOAD WATCH FORM <FontAwesomeIcon size="lg" icon={faUpload} />
         </Title>
         <Row gutter={[16, 16]}>
           <Col span={8}>

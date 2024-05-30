@@ -161,7 +161,7 @@ const LoginPage = () => {
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Submit
+                Log in
               </Button>
               <Link style={{ marginLeft: "90px" }} to="/register">
                 Don't have an account? Register here!

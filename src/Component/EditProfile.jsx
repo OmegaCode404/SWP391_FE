@@ -18,7 +18,7 @@ const EditProfile = () => {
   const onFinish = async (values) => {
     try {
       await axios.put(
-        `https://6656dd4e9f970b3b36c6e348.mockapi.io/Login`,
+        `https://6656dd4e9f970b3b36c6e348.mockapi.io/Login/1`,
         values
       );
       message.success("Changed successfully!");

@@ -10,6 +10,8 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useCart } from "../Context/CartContext";
 import useAuth from "./Hooks/useAuth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const { Text } = Typography;
 const { Content } = Layout;
@@ -93,6 +95,7 @@ const WatchDetail = () => {
             price: watchData.price,
             image: watchData.url[0],
             sellerId: watchData.seller.id,
+            sellerName: watchData.seller.name,
           },
         });
         message.success("Added to cart successfully!");
@@ -191,7 +194,7 @@ const WatchDetail = () => {
             </Text>
           </div>
           <Button type="primary" onClick={addToCart}>
-            Add to Cart
+            Add to Cart <FontAwesomeIcon size="lg" icon={faCartShopping} />
           </Button>
         </Col>
       </Row>
