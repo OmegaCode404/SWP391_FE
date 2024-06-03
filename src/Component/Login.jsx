@@ -15,7 +15,7 @@ import axios from "axios";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const LOGIN_URL = "https://6656dd4e9f970b3b36c6e348.mockapi.io/Login";
+const LOGIN_URL = "http://localhost:3000/api/auth/login"; // Change this to your actual login endpoint URL
 
 const LoginPage = () => {
   const { auth, setAuth } = useAuth();
@@ -24,8 +24,6 @@ const LoginPage = () => {
   const from = location.state?.from?.pathname || "/";
   const userRef = useRef();
   const errRef = useRef();
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
   const {
@@ -38,46 +36,26 @@ const LoginPage = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd]);
+  }, []);
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.get(
-        LOGIN_URL,
-        JSON.stringify({ email: values.email, pwd: values.password }),
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      const userData = response?.data[0]; // Assuming only one user object is returned
-      const {
-        name,
-        email,
-        password,
-        avatarUrl,
-        userRoleId,
-        phone,
-        token,
-        createdDate,
-        rating,
-      } = userData;
+      const response = await axios.post(LOGIN_URL, values); // Send login request to the backend
+      const { user, token } = response.data; // Extract user information and token from the response
 
+      // Store user information and token in the frontend
       setAuth({
-        name,
-        phone,
-        avatarUrl,
-        email,
-        password,
-        createdDate,
-        rating,
-        roles: userRoleId,
+        name: user.user_name,
+        phone: user.phone,
+        avatarUrl: user.profile_avatar,
+        email: user.email,
+        password: user.password,
+        createdDate: user.registration,
+        roles: user.role_id,
         accessToken: token,
       });
 
-      setUser("");
-      setPwd("");
-      navigate(from, { replace: true });
+      navigate(from, { replace: true }); // Redirect to the previous page or home page
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -91,7 +69,6 @@ const LoginPage = () => {
       errRef.current.focus();
     }
   };
-  console.log(auth);
 
   return (
     <ConfigProvider theme={{ token: { colorBgContainer, borderRadiusLG } }}>
@@ -131,8 +108,8 @@ const LoginPage = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Email"
-              name="email"
+              label="Email" // Change label to Email
+              name="email" // Change name to email
               rules={[
                 { required: true, message: "Please input your email!" },
                 { type: "email", message: "Please enter a valid email!" },

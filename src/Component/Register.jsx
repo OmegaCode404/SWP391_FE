@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Form, Input, Button, message } from "antd";
+import React from "react";
+import { Layout, Row, Col, Form, Input, Button, message, Select } from "antd";
 import axios from "axios";
+
+const { Option } = Select;
 const { Content } = Layout;
+
 const Register = () => {
   const onFinish = async (values) => {
+    const payload = {
+      ...values,
+      profileAvatar: "default-avatar.png", // Or set it to an appropriate default value
+      roleId: "11111111-1111-1111-1111-111111111111", // Default role ID
+    };
+
     try {
-      await axios.post(
-        `https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/user/`,
-        values
-      );
+      await axios.post(`http://localhost:3000/api/auth/register`, payload);
       message.success("Register successfully!");
       // Optionally, redirect to the profile page or show a success message
     } catch (error) {
@@ -22,10 +28,10 @@ const Register = () => {
         <Row justify="center">
           <Col span={12}>
             <h1 className="formTitle">REGISTER FORM</h1>
-            <Form name="editProfile" onFinish={onFinish}>
+            <Form name="register" onFinish={onFinish}>
               <Form.Item
                 label="User Name"
-                name="name"
+                name="username"
                 rules={[
                   { required: true, message: "Please input your username!" },
                 ]}
@@ -61,7 +67,6 @@ const Register = () => {
               >
                 <Input.Password />
               </Form.Item>
-
               <Form.Item
                 name="confirm"
                 label="Confirm Password"
@@ -78,9 +83,7 @@ const Register = () => {
                         return Promise.resolve();
                       }
                       return Promise.reject(
-                        new Error(
-                          "The new password that you entered do not match!"
-                        )
+                        new Error("The passwords do not match!")
                       );
                     },
                   }),
@@ -93,6 +96,28 @@ const Register = () => {
                 name="phone"
                 rules={[
                   { required: true, message: "Please input your phone!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Gender"
+                name="gender"
+                rules={[
+                  { required: true, message: "Please select your gender!" },
+                ]}
+              >
+                <Select placeholder="Select your gender">
+                  <Option value="Male">Male</Option>
+                  <Option value="Female">Female</Option>
+                  <Option value="Other">Other</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Address"
+                name="address"
+                rules={[
+                  { required: true, message: "Please input your address!" },
                 ]}
               >
                 <Input />

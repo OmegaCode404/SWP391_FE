@@ -21,7 +21,13 @@ const UserDetail = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -93,7 +99,7 @@ const UserDetail = () => {
                 <b>Phone:</b> {userData.phone}
               </Text>
               <Text>
-                <b>Member since:</b> {userData.createdDate}
+                <b>Member since:</b> {formatDate(userData.createdDate)}
               </Text>
               <Text>
                 <b>Rating:</b>

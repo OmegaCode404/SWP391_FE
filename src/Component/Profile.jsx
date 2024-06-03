@@ -8,6 +8,13 @@ import useAuth from "./Hooks/useAuth";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 const Profile = () => {
   const { auth } = useAuth(); // Use the useAuth hook
@@ -66,7 +73,7 @@ const Profile = () => {
               <strong>Email:</strong> {email}
             </Paragraph>
             <Paragraph>
-              <strong>Is a member since:</strong> {createdDate}
+              <strong>Is a member since:</strong> {formatDate(createdDate)}
             </Paragraph>
             <Paragraph>
               <strong>Rating:</strong> <Rating score={rating} />
