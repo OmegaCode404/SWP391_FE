@@ -1,13 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import {
   Layout,
-  theme,
   ConfigProvider,
   Button,
   Form,
   Input,
   Checkbox,
   Typography,
+  message,
+  theme,
 } from "antd";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "./Hooks/useAuth";
@@ -15,7 +16,7 @@ import axios from "axios";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const LOGIN_URL = "http://localhost:3000/api/auth/login"; // Change this to your actual login endpoint URL
+const LOGIN_URL = "http://localhost:8080/api/v1/auth/authenticate"; // Change this to your actual login endpoint URL
 
 const LoginPage = () => {
   const { auth, setAuth } = useAuth();
@@ -41,26 +42,34 @@ const LoginPage = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(LOGIN_URL, values); // Send login request to the backend
-      const { user, token } = response.data; // Extract user information and token from the response
+      const { user, token, refreshToken } = response.data; // Extract user information and token from the response
 
       // Store user information and token in the frontend
       setAuth({
-        name: user.user_name,
-        phone: user.phone,
-        avatarUrl: user.profile_avatar,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-        password: user.password,
-        createdDate: user.registration,
-        roles: user.role_id,
+        phone: user.phone,
+        gender: user.gender,
+        avatarUrl: user.avatarUrl,
+        address: user.address,
+        role: user.role,
         accessToken: token,
+        refreshToken: refreshToken,
       });
 
-      navigate(from, { replace: true }); // Redirect to the previous page or home page
+      message.success("Logged in successfully!");
+      if (user.role === "APPRAISER") {
+        navigate("/unappraised-watches");
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Email or Password");
+        setErrMsg("Incorrect Email or Password");
       } else if (err.response?.status === 401) {
         setErrMsg("Unauthorized");
       } else {
@@ -108,8 +117,8 @@ const LoginPage = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Email" // Change label to Email
-              name="email" // Change name to email
+              label="Email"
+              name="email"
               rules={[
                 { required: true, message: "Please input your email!" },
                 { type: "email", message: "Please enter a valid email!" },

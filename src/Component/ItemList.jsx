@@ -1,31 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row } from "antd";
+import { Card, Col, Row, Alert } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 import moment from "moment";
+import useAuth from "./Hooks/useAuth";
 
 const ItemList = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchWatches = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get(
-          "https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/watch"
+        const response = await axios.get("http://localhost:8080/api/v1/watch");
+        const appraisedWatches = response.data.filter(
+          (watch) => watch.appraisalId !== null
         );
-        setItems(response.data.map((item) => ({ ...item, url: item.url[0] })));
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      } finally {
+        setItems(appraisedWatches);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchWatches();
   }, []);
 
   const getTimeSincePost = (postDate) => {
@@ -45,8 +48,21 @@ const ItemList = () => {
   const handleItemClick = (id) => {
     navigate(`/watch/${id}`);
   };
+
   if (loading) {
     return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <Alert
+        message="Error"
+        description={error.message}
+        type="error"
+        showIcon
+        style={{ margin: "20px" }}
+      />
+    );
   }
 
   return (
@@ -61,20 +77,22 @@ const ItemList = () => {
             cover={
               <img
                 alt={item.name}
-                src={item.url}
+                src={item.imageUrl[0]}
                 className="item-cover-image"
               />
             }
           >
             <div>
               <span className="item-price">
-                Price: {item.price.toLocaleString()} đ
+                Price: {item.price?.toLocaleString()} đ
               </span>
             </div>
             <div className="item-details">
-              <span className="item-seller">{item.seller.name}</span>
+              <b>Brand: {item.brand} </b>
+            </div>
+            <div className="item-details">
               <span className="item-post-date">
-                {getTimeSincePost(item.postDate)}
+                {getTimeSincePost(item?.postDate)}
               </span>
             </div>
           </Card>

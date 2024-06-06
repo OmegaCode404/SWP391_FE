@@ -28,6 +28,9 @@ const thumbnailStyle = {
 const WatchDetail = () => {
   let { id } = useParams();
   const [watchData, setWatchData] = useState(null);
+  const [sellerName, setSellerName] = useState(null);
+  const [appraisalData, setAppraisalData] = useState(null);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
@@ -40,18 +43,25 @@ const WatchDetail = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/watch/${id}`
+          `http://localhost:8080/api/v1/watch/${id}`
         );
         setWatchData(response.data);
+        // Check if appraisalId exists and fetch appraisal data
+        if (response.data.appraisalId) {
+          const appraisalResponse = await axios.get(
+            `http://localhost:8080/api/v1/appraisal/${response.data.appraisalId}`
+          );
+          // Update state with appraisal data
+          setAppraisalData(appraisalResponse.data);
+        }
       } catch (error) {
         console.error("Error fetching watch details: ", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [id]);
+  }, [id, watchData?.appraisalId]); // Include watchData.appraisalId in the dependency array
 
   const handleThumbnailClick = (index) => {
     setCurrentSlide(index);
@@ -74,11 +84,15 @@ const WatchDetail = () => {
 
   const addToCart = () => {
     if (auth) {
+      const isCurrentUserSeller = auth.id === watchData.sellerId;
+      if (isCurrentUserSeller) {
+        return message.info("Cannot add your own item!");
+      }
       const itemInCart = cartState.cartItems.find(
         (item) => item.id === watchData.id
       );
       const itemsFromDifferentSeller = cartState.cartItems.some(
-        (item) => item.sellerId !== watchData.seller.id
+        (item) => item.sellerId !== watchData.sellerId
       );
 
       if (itemInCart) {
@@ -94,9 +108,10 @@ const WatchDetail = () => {
             id: watchData.id,
             name: watchData.name,
             price: watchData.price,
-            image: watchData.url[0],
-            sellerId: watchData.seller.id,
-            sellerName: watchData.seller.name,
+            brand: watchData.brand,
+            image: watchData.imageUrl[0],
+            sellerId: watchData.sellerId,
+            sellerName: sellerName,
           },
         });
         message.success("Added to cart successfully!");
@@ -128,7 +143,7 @@ const WatchDetail = () => {
             arrows
             initialSlide={currentSlide}
           >
-            {watchData.url.map((imageUrl) => (
+            {watchData.imageUrl.map((imageUrl) => (
               <div key={imageUrl}>
                 <PhotoProvider>
                   <PhotoView src={imageUrl}>
@@ -144,7 +159,7 @@ const WatchDetail = () => {
             ))}
           </Carousel>
           <div className="thumbnails">
-            {watchData.url.map((imageUrl, index) => (
+            {watchData.imageUrl.map((imageUrl, index) => (
               <img
                 key={index}
                 src={imageUrl}
@@ -166,7 +181,7 @@ const WatchDetail = () => {
               Price:{" "}
             </Text>
             <Text style={{ fontSize: "16px", color: "#ff4d4f" }}>
-              {watchData.price.toLocaleString()} đ
+              {watchData.price?.toLocaleString()} đ
             </Text>
           </div>
           <div style={{ marginBottom: "10px" }}>
@@ -180,12 +195,10 @@ const WatchDetail = () => {
           <div style={{ marginBottom: "10px" }}>
             <Text style={{ fontSize: "16px" }}>
               Seller:{" "}
-              <Link to={`/user/${watchData.seller.id}`}>
-                {watchData?.seller.name}
-              </Link>
+              <Link to={`/user/${watchData.sellerId}`}>{sellerName}</Link>
             </Text>
             {" ("}
-            <Rating score={watchData?.seller.rating}></Rating>
+            <Rating score={watchData?.seller?.rating}></Rating>
             {")"}
           </div>
           <div style={{ marginBottom: "10px" }}>
@@ -193,7 +206,7 @@ const WatchDetail = () => {
               Appraised by:{" "}
             </Text>
             <Text style={{ fontSize: "16px" }}>
-              {watchData?.appraiser.name}
+              {watchData?.appraiser?.name}
             </Text>
           </div>
           <Button type="primary" onClick={addToCart}>
@@ -210,46 +223,52 @@ const WatchDetail = () => {
         <div className="appraisal">
           <Row className="row">
             <Col span={8}>
-              <span className="attribute">Brand</span>
+              <span className="attribute">Price</span>
               <br></br>
-              <span>Rolex</span>
+              <span>{appraisalData.value?.toLocaleString() + "đ"}</span>
             </Col>
             <Col span={8}>
-              <span className="attribute">Hand </span> <br></br>
-              <span>stick</span>
+              <span className="attribute">Year of production: </span> <br></br>
+              <span>{appraisalData.yearOfProduction}</span>
             </Col>
             <Col span={8}>
-              <span className="attribute">Crown </span> <br></br>
-              <span>good</span>
+              <span className="attribute">Material: </span> <br></br>
+              <span>{appraisalData.material}</span>
             </Col>
           </Row>
           <Row className="row">
             <Col span={8}>
-              <span className="attribute">Model</span>
+              <span className="attribute">Buckle</span>
               <br></br>
-              <span>Rolex Submariner</span>
+              <span>{appraisalData.buckle}</span>
             </Col>
             <Col span={8}>
-              <span className="attribute">Case material </span> <br></br>
-              <span>steel</span>
-            </Col>
-            <Col span={8}>
-              <span className="attribute">Braclet </span> <br></br>
-              <span>solid</span>
-            </Col>
-          </Row>
-          <Row className="row">
-            <Col span={8}>
-              <span className="attribute">Crystal </span> <br></br>
-              <span>nice</span>
+              <span className="attribute">Thickness </span> <br></br>
+              <span>{appraisalData.thickness}</span>
             </Col>
             <Col span={8}>
               <span className="attribute">Dial </span> <br></br>
-              <span>good</span>
+              <span>{appraisalData.dial}</span>
+            </Col>
+          </Row>
+          <Row className="row">
+            <Col span={8}>
+              <span className="attribute">Movement </span> <br></br>
+              <span>{appraisalData.movement}</span>
             </Col>
             <Col span={8}>
-              <span className="attribute">Water resistance </span> <br></br>
-              <span>Yes</span>
+              <span className="attribute">Crystal </span> <br></br>
+              <span>{appraisalData.crystal}</span>
+            </Col>
+            <Col span={8}>
+              <span className="attribute">bracket </span> <br></br>
+              <span>{appraisalData.bracket}</span>
+            </Col>
+          </Row>
+          <Row className="row">
+            <Col span={24}>
+              <span className="attribute">Comment </span> <br></br>
+              <span>{appraisalData.comments}</span>
             </Col>
           </Row>
         </div>

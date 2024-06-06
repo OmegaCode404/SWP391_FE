@@ -29,7 +29,16 @@ const Profile = () => {
     return <Loading />;
   }
 
-  const { name, phone, email, avatarUrl, createdDate, rating } = auth;
+  const {
+    firstName,
+    lastName,
+    phone,
+    email,
+    avatarUrl,
+    createdDate,
+    rating,
+    gender,
+  } = auth;
 
   return (
     <Content
@@ -64,13 +73,16 @@ const Profile = () => {
               User Information
             </Title>
             <Paragraph>
-              <strong>User Name:</strong> {name}
+              <strong>User Name:</strong> {firstName + " " + lastName}
             </Paragraph>
             <Paragraph>
               <strong>Phone:</strong> {phone}
             </Paragraph>
             <Paragraph>
               <strong>Email:</strong> {email}
+            </Paragraph>
+            <Paragraph>
+              <strong>Gender:</strong> {gender}
             </Paragraph>
             <Paragraph>
               <strong>Is a member since:</strong> {formatDate(createdDate)}

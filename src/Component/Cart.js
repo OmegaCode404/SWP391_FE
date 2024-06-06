@@ -89,9 +89,15 @@ const Cart = () => {
                   <Link to={`/watch/${item.id}`}>{"Title: " + item.name}</Link>
                 }
                 description={
-                  <Text style={{ color: colorPrimary }}>
-                    <b>Price: </b> {item.price.toLocaleString()} đ<br></br>
-                  </Text>
+                  <div>
+                    <Text style={{ color: "black" }}>
+                      <b>Brand: </b> {item.brand}
+                      <br></br>
+                    </Text>
+                    <Text style={{ color: "black" }}>
+                      <b>Price: </b> {item.price?.toLocaleString()} đ<br></br>
+                    </Text>
+                  </div>
                 }
               />
             </List.Item>

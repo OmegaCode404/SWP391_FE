@@ -8,13 +8,17 @@ const { Content } = Layout;
 const Register = () => {
   const onFinish = async (values) => {
     const payload = {
-      ...values,
-      profileAvatar: "default-avatar.png", // Or set it to an appropriate default value
-      roleId: "11111111-1111-1111-1111-111111111111", // Default role ID
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
+      gender: values.gender,
+      address: values.address,
     };
 
     try {
-      await axios.post(`http://localhost:3000/api/auth/register`, payload);
+      await axios.post(`http://localhost:8080/api/v1/auth/register`, payload);
       message.success("Register successfully!");
       // Optionally, redirect to the profile page or show a success message
     } catch (error) {
@@ -30,10 +34,19 @@ const Register = () => {
             <h1 className="formTitle">REGISTER FORM</h1>
             <Form name="register" onFinish={onFinish}>
               <Form.Item
-                label="User Name"
-                name="username"
+                label="First Name"
+                name="firstname"
                 rules={[
-                  { required: true, message: "Please input your username!" },
+                  { required: true, message: "Please input your first name!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Last Name"
+                name="lastname"
+                rules={[
+                  { required: true, message: "Please input your last name!" },
                 ]}
               >
                 <Input />

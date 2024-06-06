@@ -1,17 +1,32 @@
-import React from "react";
-import { Layout, theme } from "antd";
-
-import ImageUpload from "./ImageUpload";
-import { Col, Button, message, Row, Form, Input, Select } from "antd";
-import { useState } from "react";
-import { Typography } from "antd";
+import React, { useState } from "react";
+import {
+  Layout,
+  theme,
+  Typography,
+  Col,
+  Button,
+  message,
+  Row,
+  Form,
+  Input,
+  Select,
+} from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import ImageUpload from "./ImageUpload";
+import useAuth from "./Hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
 const { Title } = Typography;
 const { Option } = Select;
 const { Content } = Layout;
+
 const RegisterPost = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [form] = Form.useForm();
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -20,17 +35,20 @@ const RegisterPost = () => {
     setSelectedFiles(fileList.map((file) => file.originFileObj));
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (watchId) => {
     const formData = new FormData();
     selectedFiles.forEach((file) => {
-      formData.append("files[]", file);
+      formData.append("imageFiles", file);
     });
     try {
       const response = await fetch(
-        "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+        `http://localhost:8080/api/v1/watch/${watchId}/images`,
         {
           method: "POST",
           body: formData,
+          headers: {
+            Authorization: `Bearer ${auth.accessToken}`,
+          },
         }
       );
       if (response.ok) {
@@ -39,14 +57,41 @@ const RegisterPost = () => {
       } else {
         message.error("Upload failed.");
       }
+      navigate("/");
     } catch (error) {
       message.error("Upload error: " + error);
     }
   };
-  const onFinish = (values) => {
-    console.log("Form values:", values);
-  };
 
+  const onFinish = async (values) => {
+    try {
+      // Include user ID in the request body
+      const body = { ...values, userId: auth.id };
+
+      const response = await fetch(
+        "http://localhost:8080/api/v1/watch/user/" + auth.id,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.accessToken}`, // Include authentication token in request headers
+          },
+          body: JSON.stringify(body),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        message.success("Watch details submitted successfully!");
+        if (selectedFiles.length > 0) {
+          await handleUpload(data.id);
+        }
+      } else {
+        message.error("Failed to submit watch details.");
+      }
+    } catch (error) {
+      message.error("Submission error: " + error);
+    }
+  };
   const watchTypes = [
     { name: "Mechanical" },
     { name: "Automatic" },
@@ -88,40 +133,53 @@ const RegisterPost = () => {
               Watch's information
             </Title>
             <Form
+              form={form}
               name="register_post_form"
               onFinish={onFinish}
               style={{ marginTop: 16 }}
             >
               <Form.Item
-                name="title"
-                label="Title"
+                name="name"
+                label="Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter the title",
+                    message: "Please enter the name",
                   },
                 ]}
               >
-                <Input placeholder="Enter title here" />
+                <Input placeholder="Enter name here" />
               </Form.Item>
               <Form.Item
+                name="brand"
+                label="Brand"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the brand",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter brand here" />
+              </Form.Item>
+              {/* <Form.Item
                 name="watchtype"
                 label="Watch type"
                 rules={[
                   {
                     required: true,
+                    message: "Please select a watch type",
                   },
                 ]}
-                initialValue="Choose watch catalog here"
               >
-                <Select>
+                <Select placeholder="Choose watch type here">
                   {watchTypes.map((type, index) => (
                     <Option key={index} value={type.name}>
                       {type.name}
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 name="description"
                 label="Description"
@@ -134,20 +192,21 @@ const RegisterPost = () => {
               >
                 <Input.TextArea placeholder="Enter description" />
               </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ marginTop: 16 }}
+                >
+                  Submit Watch Details
+                </Button>
+              </Form.Item>
             </Form>
-            {selectedFiles.length > 0 && (
-              <Button
-                type="primary"
-                onClick={handleUpload}
-                style={{ marginTop: 16 }}
-              >
-                Upload Selected Files
-              </Button>
-            )}
           </Col>
         </Row>
       </div>
     </Content>
   );
 };
+
 export default RegisterPost;

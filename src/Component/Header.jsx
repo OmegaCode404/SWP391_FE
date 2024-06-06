@@ -62,31 +62,38 @@ const HeaderBar = () => {
           onClick={handleClick}
           style={{ flex: 1, minWidth: 0 }}
         >
-          <Menu.Item key="home">
-            <FontAwesomeIcon size="lg" icon={faHome} />
-            Home
-          </Menu.Item>
+          {auth?.role !== "APPRAISER" && (
+            <Menu.Item key="home">
+              <FontAwesomeIcon size="lg" icon={faHome} />
+              Home
+            </Menu.Item>
+          )}
           <Menu.Item key="about">
             <FontAwesomeIcon size="lg" icon={faCircleInfo} />
             About us
           </Menu.Item>
-          {auth ? (
-            <Menu.Item key="upload">
-              <FontAwesomeIcon size="lg" icon={faUpload} /> Upload post
+          {auth && auth?.role === "USER" && (
+            <>
+              <Menu.Item key="upload">
+                <FontAwesomeIcon size="lg" icon={faUpload} /> Upload post
+              </Menu.Item>
+              <Menu.Item key="cart">
+                <FontAwesomeIcon size="lg" icon={faCartShopping} /> Your Cart{" "}
+              </Menu.Item>
+            </>
+          )}
+          {auth && auth?.role === "APPRAISER" && (
+            <Menu.Item key="unappraised-watches">
+              <FontAwesomeIcon size="lg" icon={faCartShopping} />{" "}
+              unappraised-watches{" "}
             </Menu.Item>
-          ) : null}
-          {auth ? (
-            <Menu.Item key="cart">
-              <FontAwesomeIcon size="lg" icon={faCartShopping} /> Your Cart{" "}
-            </Menu.Item>
-          ) : null}
+          )}
           {!auth ? (
             <Menu.Item key="login">
               <FontAwesomeIcon size="lg" icon={faUser} />
               Login
             </Menu.Item>
-          ) : null}
-          {auth ? (
+          ) : (
             <Popconfirm
               title="Are you sure you want to logout?"
               onConfirm={handleLogout}
@@ -98,16 +105,18 @@ const HeaderBar = () => {
                 <FontAwesomeIcon size="lg" icon={faRightFromBracket} /> Logout
               </Menu.Item>
             </Popconfirm>
-          ) : null}
+          )}
         </Menu>
       </Col>
       <Col span={11} style={{ display: "flex", alignItems: "center" }}>
-        <Search
-          placeholder="Input watch name here"
-          onSearch={onSearch}
-          enterButton
-          style={{ width: "60%" }}
-        />
+        {auth?.role !== "APPRAISER" && (
+          <Search
+            placeholder="Input watch name here"
+            onSearch={onSearch}
+            enterButton
+            style={{ width: "60%" }}
+          />
+        )}
         {auth ? (
           <div style={{ marginLeft: "auto", marginRight: "15px" }}>
             <AvatarDropdown />

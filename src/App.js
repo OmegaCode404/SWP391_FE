@@ -15,6 +15,8 @@ import Cart from "./Component/Cart";
 import MyPost from "./Component/MyPost";
 import AboutUs from "./Component/AboutUs";
 import UserDetail from "./Component/UserProfile";
+import UnappraisedWatches from "./Component/UnappraisedWatches";
+import AppraiseWatch from "./Component/AppraiseWatch";
 
 const App = () => {
   return (
@@ -25,14 +27,21 @@ const App = () => {
         <Route path="/filter/:type" element={<WatchFilter />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route element={<RequireAuth></RequireAuth>}>
+        <Route element={<RequireAuth role={["USER"]}></RequireAuth>}>
           <Route path="/upload" element={<RegisterPost />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
+
           <Route path="/cart" element={<Cart />} />
           <Route path="/My-Post" element={<MyPost />} />
         </Route>
         <Route path="/register" element={<Register />} />
+        <Route element={<RequireAuth roles={["APPRAISER"]} />}>
+          <Route path="/unappraised-watches" element={<UnappraisedWatches />} />
+          <Route path="/appraise-watch/:id" element={<AppraiseWatch />} />
+        </Route>
+        <Route element={<RequireAuth roles={["USER", "APPRAISER"]} />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+        </Route>
         <Route path="/user/:id" element={<UserDetail />} />
       </Route>
     </Routes>
