@@ -32,23 +32,21 @@ const WatchFilter = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchWatches = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `https://6644a330b8925626f88f3fb9.mockapi.io/api/v1/watch`
-        );
+        const response = await axios.get(`http://localhost:8080/api/v1/watch`);
         const filteredWatches = response.data.filter(
-          (watch) => watch.type === type
+          (watch) => (!type || watch.brand === type) && watch.appraisalId
         );
         setWatches(filteredWatches);
       } catch (error) {
-        console.error("Error fetching watches: ", error);
+        console.error("Error fetching watch details: ", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchWatches();
+    fetchData();
   }, [type]);
 
   const sortItems = (sortBy) => {
@@ -138,9 +136,13 @@ const WatchFilter = () => {
                 <Row gutter={16} align="middle">
                   <Col span={8}>
                     <img
-                      alt={watch.name}
-                      src={watch.url[0]}
-                      style={{ width: "70%", height: "auto" }}
+                      alt={watch?.name}
+                      src={watch?.imageUrl[0]}
+                      style={{
+                        width: "100%",
+                        maxHeight: "130px",
+                        objectFit: "contain",
+                      }}
                     />
                   </Col>
                   <Col span={16}>

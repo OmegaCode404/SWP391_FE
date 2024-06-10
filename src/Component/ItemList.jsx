@@ -18,7 +18,7 @@ const ItemList = () => {
       try {
         const response = await axios.get("http://localhost:8080/api/v1/watch");
         const appraisedWatches = response.data.filter(
-          (watch) => watch.appraisalId !== null
+          (watch) => watch.appraisalId !== null && watch.status == true
         );
         setItems(appraisedWatches);
         setLoading(false);

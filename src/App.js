@@ -17,6 +17,7 @@ import AboutUs from "./Component/AboutUs";
 import UserDetail from "./Component/UserProfile";
 import UnappraisedWatches from "./Component/UnappraisedWatches";
 import AppraiseWatch from "./Component/AppraiseWatch";
+import PaymentReturn from "./Component/PaymentReturn";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/edit-profile" element={<EditProfile />} />
         </Route>
         <Route path="/user/:id" element={<UserDetail />} />
+        <Route path="/payment-return" element={<PaymentReturn />} />
       </Route>
     </Routes>
   );

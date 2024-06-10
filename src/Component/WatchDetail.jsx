@@ -29,6 +29,8 @@ const WatchDetail = () => {
   let { id } = useParams();
   const [watchData, setWatchData] = useState(null);
   const [sellerName, setSellerName] = useState(null);
+  const [appraiserName, setAppraiserName] = useState(null);
+
   const [appraisalData, setAppraisalData] = useState(null);
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -53,7 +55,22 @@ const WatchDetail = () => {
           );
           // Update state with appraisal data
           setAppraisalData(appraisalResponse.data);
+
+          const appraiserResponse = await axios.get(
+            `http://localhost:8080/api/v1/user/${appraisalResponse.data.appraiserId}`
+          );
+          setAppraiserName(
+            appraiserResponse.data.firstName +
+              " " +
+              appraiserResponse.data.lastName
+          );
         }
+        const sellerResponse = await axios.get(
+          `http://localhost:8080/api/v1/user/${response.data.sellerId}`
+        );
+        setSellerName(
+          sellerResponse.data.firstName + " " + sellerResponse.data.lastName
+        );
       } catch (error) {
         console.error("Error fetching watch details: ", error);
       } finally {
@@ -186,6 +203,12 @@ const WatchDetail = () => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <Text strong style={{ fontSize: "16px" }}>
+              Brand:{" "}
+            </Text>
+            <Text style={{ fontSize: "16px" }}>{watchData.brand}</Text>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <Text strong style={{ fontSize: "16px" }}>
               Posted:{" "}
             </Text>
             <Text style={{ fontSize: "16px" }}>
@@ -205,9 +228,7 @@ const WatchDetail = () => {
             <Text strong style={{ fontSize: "16px" }}>
               Appraised by:{" "}
             </Text>
-            <Text style={{ fontSize: "16px" }}>
-              {watchData?.appraiser?.name}
-            </Text>
+            <Text style={{ fontSize: "16px" }}>{appraiserName}</Text>
           </div>
           <Button type="primary" onClick={addToCart}>
             Add to Cart <FontAwesomeIcon size="lg" icon={faCartShopping} />
@@ -227,6 +248,7 @@ const WatchDetail = () => {
               <br></br>
               <span>{appraisalData.value?.toLocaleString() + "đ"}</span>
             </Col>
+
             <Col span={8}>
               <span className="attribute">Year of production: </span> <br></br>
               <span>{appraisalData.yearOfProduction}</span>

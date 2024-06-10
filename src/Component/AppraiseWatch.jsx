@@ -81,9 +81,14 @@ const AppraiseWatch = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
+      const appraisalData = {
+        ...values,
+        appraiserId: auth.id,
+        watchId: id, // assuming you have the logged-in user's id in auth.user
+      };
       await axios.post(
-        `http://localhost:8080/api/v1/appraisal/watch/${id}`,
-        values,
+        `http://localhost:8080/api/v1/appraisal/watch`,
+        appraisalData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -99,7 +104,6 @@ const AppraiseWatch = () => {
       setLoading(false);
     }
   };
-
   if (loading || !watchData) {
     return <loading />;
   }

@@ -5,6 +5,7 @@ import { Content } from "antd/es/layout/layout";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import CheckoutButton from "./CheckOutButton";
 
 const { Text, Title } = Typography;
 
@@ -115,18 +116,7 @@ const Cart = () => {
             </Text>
           </Col>
         </Row>
-        {cartItems.length > 0 && (
-          <Button
-            type="primary"
-            style={{
-              marginTop: "20px",
-              background: colorPrimary,
-            }}
-            onClick={() => alert("Proceeding to checkout...")}
-          >
-            Proceed to Checkout
-          </Button>
-        )}
+        {cartItems.length > 0 && <CheckoutButton />}
       </div>
     </Content>
   );

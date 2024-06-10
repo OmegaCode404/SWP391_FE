@@ -13,12 +13,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const watchTypes = [
-  { name: "Mechanical", icon: faGear },
-  { name: "Automatic", icon: faTachometerAlt },
-  { name: "Hybrid", icon: faClock },
-  { name: "Chronograph", icon: faCompass },
-  { name: "Classic", icon: faStopwatch },
-  { name: "Luxury", icon: faStar },
+  { name: "Rolex", icon: faGear },
+  { name: "Omega", icon: faTachometerAlt },
+  { name: "Seiko", icon: faClock },
+  { name: "Cartier", icon: faCompass },
+  { name: "IWC", icon: faStopwatch },
+  { name: "Zenith", icon: faStar },
 ];
 
 const WatchTypeList = () => {
