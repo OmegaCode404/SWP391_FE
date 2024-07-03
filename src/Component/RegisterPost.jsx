@@ -101,6 +101,8 @@ const RegisterPost = () => {
     { name: "Luxury" },
   ];
 
+  const brands = ["Rolex", "Omega", "Seiko", "Cartier", "IWC", "Zenith"];
+
   return (
     <Content
       style={{
@@ -156,30 +158,18 @@ const RegisterPost = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter the brand",
+                    message: "Please select a brand",
                   },
                 ]}
               >
-                <Input placeholder="Enter brand here" />
-              </Form.Item>
-              {/* <Form.Item
-                name="watchtype"
-                label="Watch type"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a watch type",
-                  },
-                ]}
-              >
-                <Select placeholder="Choose watch type here">
-                  {watchTypes.map((type, index) => (
-                    <Option key={index} value={type.name}>
-                      {type.name}
+                <Select placeholder="Choose brand here">
+                  {brands.map((brand, index) => (
+                    <Option key={index} value={brand}>
+                      {brand}
                     </Option>
                   ))}
                 </Select>
-              </Form.Item> */}
+              </Form.Item>
               <Form.Item
                 name="description"
                 label="Description"

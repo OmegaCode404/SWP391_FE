@@ -73,6 +73,7 @@ const ItemList = () => {
             hoverable
             title={"Title: " + item.name}
             bordered={true}
+            style={{ background: "#f2e5e5" }}
             onClick={() => handleItemClick(item.id)}
             cover={
               <img
@@ -88,11 +89,14 @@ const ItemList = () => {
               </span>
             </div>
             <div className="item-details">
-              <b>Brand: {item.brand} </b>
+              <span className="item-brand">{item.brand}</span>
+            </div>
+            <div className="item-details">
+              <span className="item-seller">{item.sellerName}</span>
             </div>
             <div className="item-details">
               <span className="item-post-date">
-                {getTimeSincePost(item?.postDate)}
+                {getTimeSincePost(item?.createdDate)}
               </span>
             </div>
           </Card>

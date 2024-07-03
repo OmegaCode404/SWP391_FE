@@ -2,6 +2,7 @@ import React from "react";
 import { Menu, Layout, Input, Col, Image, Popconfirm } from "antd";
 import { useNavigate } from "react-router-dom";
 import AvatarDropdown from "./Avatar";
+import { useState } from "react";
 import useAuth from "./Hooks/useAuth"; // Import useAuth hook
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,17 +12,19 @@ import {
   faRightFromBracket,
   faUpload,
   faUser,
+  faMessage,
+  faMagnifyingGlass,
+  faFolder,
+  faUserAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 const { Header } = Layout;
 const { Search } = Input;
 
-const onSearch = (value) => console.log(value);
-
 const HeaderBar = () => {
   const navigate = useNavigate();
   const { auth, setAuth } = useAuth(); // Use the useAuth hook to get authentication status and setAuth function
-
+  const [searchTerm, setSearchTerm] = useState("");
   const handleLogout = () => {
     setAuth(null);
     navigate("/");
@@ -34,6 +37,11 @@ const HeaderBar = () => {
     if (item.key !== "logout") {
       const path = item.key.toLowerCase();
       navigate(`/${path === "home" ? "" : path}`);
+    }
+  };
+  const handleSearch = (value) => {
+    if (value) {
+      navigate(`/filter?name=${value}`);
     }
   };
 
@@ -54,7 +62,7 @@ const HeaderBar = () => {
           height={60}
         />
       </Col>
-      <Col span={10}>
+      <Col span={12}>
         <Menu
           theme="dark"
           mode="horizontal"
@@ -68,24 +76,39 @@ const HeaderBar = () => {
               Home
             </Menu.Item>
           )}
-          <Menu.Item key="about">
-            <FontAwesomeIcon size="lg" icon={faCircleInfo} />
-            About us
-          </Menu.Item>
+          {auth?.role === "ADMIN" && (
+            <Menu.Item key="users">
+              <FontAwesomeIcon size="lg" icon={faUserAlt} />
+              User Management
+            </Menu.Item>
+          )}
+
           {auth && auth?.role === "USER" && (
             <>
               <Menu.Item key="upload">
-                <FontAwesomeIcon size="lg" icon={faUpload} /> Upload post
+                <FontAwesomeIcon size="lg" icon={faUpload} /> Upload watch
               </Menu.Item>
               <Menu.Item key="cart">
-                <FontAwesomeIcon size="lg" icon={faCartShopping} /> Your Cart{" "}
+                <FontAwesomeIcon size="lg" icon={faCartShopping} /> My Cart{" "}
+              </Menu.Item>
+              <Menu.Item key="orders">
+                <FontAwesomeIcon size="lg" icon={faFolder} /> My Orders{" "}
+              </Menu.Item>
+              <Menu.Item key="revenue">
+                <FontAwesomeIcon size="lg" icon={faUserAlt} />
+                Revenue
               </Menu.Item>
             </>
           )}
           {auth && auth?.role === "APPRAISER" && (
             <Menu.Item key="unappraised-watches">
-              <FontAwesomeIcon size="lg" icon={faCartShopping} />{" "}
-              unappraised-watches{" "}
+              <FontAwesomeIcon size="lg" icon={faMagnifyingGlass} /> Unappraised
+              watches{" "}
+            </Menu.Item>
+          )}
+          {auth && (auth?.role === "APPRAISER" || auth?.role === "USER") && (
+            <Menu.Item key="chat">
+              <FontAwesomeIcon size="lg" icon={faMessage} /> Chat
             </Menu.Item>
           )}
           {!auth ? (
@@ -108,13 +131,15 @@ const HeaderBar = () => {
           )}
         </Menu>
       </Col>
-      <Col span={11} style={{ display: "flex", alignItems: "center" }}>
+      <Col span={9} style={{ display: "flex", alignItems: "center" }}>
         {auth?.role !== "APPRAISER" && (
           <Search
-            placeholder="Input watch name here"
-            onSearch={onSearch}
-            enterButton
-            style={{ width: "60%" }}
+            placeholder="Search watches"
+            onSearch={handleSearch}
+            style={{ width: 200, marginRight: 16 }}
+            enterButton={<FontAwesomeIcon icon={faMagnifyingGlass} />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         )}
         {auth ? (

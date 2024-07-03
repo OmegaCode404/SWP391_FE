@@ -55,6 +55,7 @@ const LoginPage = () => {
         avatarUrl: user.avatarUrl,
         address: user.address,
         role: user.role,
+        createdDate: user.createdDate,
         accessToken: token,
         refreshToken: refreshToken,
       });
