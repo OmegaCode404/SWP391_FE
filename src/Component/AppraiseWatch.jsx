@@ -18,6 +18,7 @@ import moment from "moment";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { Link } from "react-router-dom";
+import ChatStartButton from "./ChatStartButton";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -212,6 +213,11 @@ const AppraiseWatch = () => {
             </Text>
             <Text style={{ fontSize: "16px" }}>{sellerName}</Text>
           </div>
+          <ChatStartButton
+            watchId={id}
+            userId={watchData.sellerId}
+            appraiserId={auth.id}
+          />
         </Col>
       </Row>
 
@@ -238,19 +244,6 @@ const AppraiseWatch = () => {
               rules={[{ required: true, message: "Please input the value!" }]}
             >
               <InputNumber min={0} style={{ width: "100%" }} />
-            </Form.Item>
-
-            <Form.Item
-              label="Year of Production"
-              name="yearOfProduction"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the year of production!",
-                },
-              ]}
-            >
-              <Input />
             </Form.Item>
 
             <Form.Item

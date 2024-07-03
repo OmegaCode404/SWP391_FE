@@ -13,11 +13,16 @@ import EditProfile from "./Component/EditProfile";
 import LayoutCom from "./Component/Layout";
 import Cart from "./Component/Cart";
 import MyPost from "./Component/MyPost";
-import AboutUs from "./Component/AboutUs";
 import UserDetail from "./Component/UserProfile";
 import UnappraisedWatches from "./Component/UnappraisedWatches";
 import AppraiseWatch from "./Component/AppraiseWatch";
 import PaymentReturn from "./Component/PaymentReturn";
+import MyOrders from "./Component/MyOrders";
+import OrderDetail from "./Component/OrderDetail";
+import Chat from "./Component/Chat";
+import FeedbackPage from "./Component/FeedbackPage";
+import UserManagement from "./Component/UserManagement";
+import Revenue from "./Component/Revenue";
 
 const App = () => {
   return (
@@ -25,14 +30,20 @@ const App = () => {
       <Route path="/" element={<LayoutCom />}>
         <Route path="/" element={<MainPage />} />
         <Route path="/watch/:id" element={<WatchDetail />} />
-        <Route path="/filter/:type" element={<WatchFilter />} />
+        <Route path="/filter" element={<WatchFilter />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/about" element={<AboutUs />} />
         <Route element={<RequireAuth role={["USER"]}></RequireAuth>}>
           <Route path="/upload" element={<RegisterPost />} />
 
           <Route path="/cart" element={<Cart />} />
           <Route path="/My-Post" element={<MyPost />} />
+          <Route path="/orders" element={<MyOrders />} />
+          <Route path="/orders/:orderId" element={<OrderDetail />} />
+          <Route
+            path="/feedback/:watchId/:userId/:userType"
+            element={<FeedbackPage />}
+          />
+          <Route path="revenue" element={<Revenue />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route element={<RequireAuth roles={["APPRAISER"]} />}>
@@ -42,9 +53,13 @@ const App = () => {
         <Route element={<RequireAuth roles={["USER", "APPRAISER"]} />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/chat" element={<Chat />} />
         </Route>
         <Route path="/user/:id" element={<UserDetail />} />
         <Route path="/payment-return" element={<PaymentReturn />} />
+        <Route element={<RequireAuth roles={["ADMIN"]} />}>
+          <Route path="users" element={<UserManagement />} />
+        </Route>
       </Route>
     </Routes>
   );

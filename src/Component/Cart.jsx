@@ -1,30 +1,70 @@
-import React from "react";
-import { useCart } from "../Context/CartContext";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { List, Button, Typography, Row, Col, theme } from "antd";
-import { Content } from "antd/es/layout/layout";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import CheckoutButton from "./CheckOutButton";
+import useAuth from "./Hooks/useAuth";
 
 const { Text, Title } = Typography;
 
 const Cart = () => {
-  const { state, dispatch } = useCart();
-  const { cartItems } = state;
+  const [cart, setCart] = useState({ cartItems: [], totalPrice: 0 });
+  const { auth } = useAuth();
 
-  const handleRemoveFromCart = (id) => {
-    dispatch({ type: "REMOVE_FROM_CART", payload: id });
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/cart/${auth.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`, // Include authentication token in request headers
+            },
+          }
+        );
+        if (response.status === 200) {
+          setCart(response.data);
+        } else if (response.status === 404) {
+          console.log("User not found or cart is empty");
+        }
+      } catch (error) {
+        console.error("Error fetching cart data", error);
+      }
+    };
+    fetchCart();
+  }, [auth.id, auth.accessToken]);
+
+  const handleRemoveFromCart = async (cartItemId) => {
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/v1/cart/${auth.id}/${cartItemId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.accessToken}`, // Include authentication token in request headers
+          },
+        }
+      );
+      setCart((prevCart) => ({
+        ...prevCart,
+        cartItems: prevCart.cartItems.filter((item) => item.id !== cartItemId),
+        totalPrice:
+          prevCart.totalPrice -
+          prevCart.cartItems.find((item) => item.id === cartItemId).watch.price,
+      }));
+    } catch (error) {
+      console.error("Error removing item from cart", error);
+    }
   };
-
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
 
   const {
     token: { colorBgContainer, borderRadiusLG, colorPrimary, colorError },
   } = theme.useToken();
 
   return (
-    <Content
+    <div
       style={{
         padding: "20px 20px",
         flexGrow: 1,
@@ -60,8 +100,8 @@ const Cart = () => {
             padding: "10px",
           }}
           itemLayout="horizontal"
-          dataSource={cartItems}
-          renderItem={(item) => (
+          dataSource={cart.cartItems}
+          renderItem={(cartItem) => (
             <List.Item
               style={{
                 padding: "10px",
@@ -71,7 +111,7 @@ const Cart = () => {
               actions={[
                 <Button
                   type="link"
-                  onClick={() => handleRemoveFromCart(item.id)}
+                  onClick={() => handleRemoveFromCart(cartItem.id)}
                   style={{ color: colorError }}
                 >
                   Remove
@@ -81,22 +121,21 @@ const Cart = () => {
               <List.Item.Meta
                 avatar={
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={cartItem.watch.imageUrl[0]}
+                    alt={cartItem.watch.name}
                     style={{ width: "70px", borderRadius: "8px" }}
                   />
                 }
-                title={
-                  <Link to={`/watch/${item.id}`}>{"Title: " + item.name}</Link>
-                }
+                title={"Title: " + cartItem.watch.name}
                 description={
                   <div>
                     <Text style={{ color: "black" }}>
-                      <b>Brand: </b> {item.brand}
+                      <b>Brand: </b> {cartItem.watch.brand}
                       <br></br>
                     </Text>
                     <Text style={{ color: "black" }}>
-                      <b>Price: </b> {item.price?.toLocaleString()} đ<br></br>
+                      <b>Price: </b> {cartItem.watch.price?.toLocaleString()} đ
+                      <br></br>
                     </Text>
                   </div>
                 }
@@ -111,14 +150,18 @@ const Cart = () => {
             </Text>
           </Col>
           <Col span={12} style={{ textAlign: "right" }}>
-            <Text strong style={{ fontSize: "16px", color: colorPrimary }}>
-              {totalPrice.toLocaleString()} đ
+            <Text strong style={{ fontSize: "16px" }}>
+              {cart.totalPrice?.toLocaleString()} đ
             </Text>
           </Col>
         </Row>
-        {cartItems.length > 0 && <CheckoutButton />}
+        <Row style={{ marginTop: "20px" }} justify="center">
+          <Col>
+            <CheckoutButton />
+          </Col>
+        </Row>
       </div>
-    </Content>
+    </div>
   );
 };
 

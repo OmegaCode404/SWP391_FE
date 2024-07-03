@@ -1,13 +1,15 @@
-import React from "react";
-import { Layout, Col, Row, Typography, Avatar, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Layout, Col, Row, Typography, Avatar, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import axios from "axios";
 import Rating from "./Rating";
 import Loading from "./Loading";
 import useAuth from "./Hooks/useAuth";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -17,16 +19,45 @@ const formatDate = (dateString) => {
 };
 
 const Profile = () => {
-  const { auth } = useAuth(); // Use the useAuth hook
+  const { auth } = useAuth();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/user/${auth.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+        message.error("Failed to fetch user data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleEditProfile = () => {
     navigate("/edit-profile");
   };
 
-  // If auth is still loading or if user data is not available, show a loading spinner
-  if (!auth) {
+  if (loading) {
     return <Loading />;
+  }
+
+  if (!user) {
+    return <div>Error loading user data</div>;
   }
 
   const {
@@ -38,7 +69,7 @@ const Profile = () => {
     createdDate,
     rating,
     gender,
-  } = auth;
+  } = user;
 
   return (
     <Content

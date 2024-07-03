@@ -5,18 +5,18 @@ import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./Context/AuthProvider";
-import { CartProvider } from "./Context/CartContext";
+import { NotificationProvider } from "./Context/NotificationContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider>
+        <NotificationProvider>
           <Routes>
             <Route path="/*" element={<App />}></Route>
           </Routes>
-        </CartProvider>
+        </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

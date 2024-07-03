@@ -1,11 +1,13 @@
 import React from "react";
 import { Layout, Row, Col, Form, Input, Button, message, Select } from "antd";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const { Content } = Layout;
 
 const Register = () => {
+  const navigate = useNavigate();
   const onFinish = async (values) => {
     const payload = {
       firstname: values.firstname,
@@ -15,11 +17,14 @@ const Register = () => {
       phone: values.phone,
       gender: values.gender,
       address: values.address,
+      avatarUrl:
+        "https://res.cloudinary.com/dfeuv0ynf/image/upload/v1718868313/ytqqm8d9pavipqjjyfwi.jpg",
     };
 
     try {
       await axios.post(`http://localhost:8080/api/v1/auth/register`, payload);
       message.success("Register successfully!");
+      navigate("/");
       // Optionally, redirect to the profile page or show a success message
     } catch (error) {
       message.error("Failed!");

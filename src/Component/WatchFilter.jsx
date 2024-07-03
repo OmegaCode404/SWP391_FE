@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Row, Col, Card, Slider } from "antd"; // Import Slider component
+import { Row, Col, Card, Slider, Input, Select, Button } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Loading from "./Loading";
-import { useNavigate } from "react-router-dom";
 import WatchTypeList from "./WatchTypeList";
 import { theme } from "antd";
-import { Select } from "antd";
+
+const { Option } = Select;
 
 const WatchFilter = () => {
   const { type } = useParams();
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
   const [watches, setWatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("ascending");
-  const [priceRange, setPriceRange] = useState([0, 5000000]); // State for price range
+  const [priceRange, setPriceRange] = useState([0, 5000000]);
+  const [searchTerm, setSearchTerm] = useState(query.get("name") || "");
+  const [brand, setBrand] = useState(query.get("brand") || "");
+  const [filterApplied, setFilterApplied] = useState(false);
+
+  // Temporary state for holding the input values
+  const [tempSearchTerm, setTempSearchTerm] = useState(searchTerm);
+  const [tempBrand, setTempBrand] = useState(brand);
+  const [tempPriceRange, setTempPriceRange] = useState(priceRange);
+
   const marks = {
     0: "0",
     1000000: "1,000,000",
@@ -22,9 +33,7 @@ const WatchFilter = () => {
     3000000: "3,000,000",
     4000000: "4,000,000",
     5000000: {
-      style: {
-        color: "#f50",
-      },
+      style: { color: "#f50" },
       label: <strong>5,000,000</strong>,
     },
   };
@@ -35,11 +44,25 @@ const WatchFilter = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/watch`);
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/watch/search`,
+          {
+            params: {
+              name: searchTerm,
+              brand,
+              minPrice: priceRange[0],
+              maxPrice: priceRange[1],
+            },
+          }
+        );
         const filteredWatches = response.data.filter(
-          (watch) => (!type || watch.brand === type) && watch.appraisalId
+          (watch) =>
+            (!type || watch.brand === type) &&
+            watch.appraisalId &&
+            watch.status === true
         );
         setWatches(filteredWatches);
+        console.log("Fetched watches: ", filteredWatches);
       } catch (error) {
         console.error("Error fetching watch details: ", error);
       } finally {
@@ -47,7 +70,7 @@ const WatchFilter = () => {
       }
     };
     fetchData();
-  }, [type]);
+  }, [type, searchTerm, brand, priceRange]);
 
   const sortItems = (sortBy) => {
     const sortedItems = [...watches];
@@ -72,13 +95,18 @@ const WatchFilter = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const handlePriceRangeChange = (value) => {
-    setPriceRange(value);
+  const handleTempPriceRangeChange = (value) => {
+    setTempPriceRange(value);
   };
 
-  const filterWatchesByPriceRange = (watch) => {
-    const price = watch.price;
-    return price >= priceRange[0] && price <= priceRange[1];
+  const handleFilterClick = () => {
+    setSearchTerm(tempSearchTerm);
+    setBrand(tempBrand);
+    setPriceRange(tempPriceRange);
+    setFilterApplied(true);
+    navigate(
+      `/filter?name=${tempSearchTerm}&brand=${tempBrand}&minPrice=${tempPriceRange[0]}&maxPrice=${tempPriceRange[1]}`
+    );
   };
 
   if (loading) {
@@ -94,7 +122,45 @@ const WatchFilter = () => {
         flexDirection: "column",
       }}
     >
-      <WatchTypeList />
+      <b style={{ marginBottom: "5px" }}>Name: </b>
+      <Input
+        placeholder="Search watch name"
+        value={tempSearchTerm}
+        onChange={(e) => setTempSearchTerm(e.target.value)}
+        style={{ marginBottom: 20, width: "60%" }}
+      />
+      <b style={{ marginBottom: "5px" }}>Brand: </b>
+      <Select
+        placeholder="Filter by brand"
+        value={tempBrand}
+        onChange={(value) => setTempBrand(value)}
+        style={{ marginBottom: 20, width: "60%" }}
+      >
+        <Option value="Rolex">Rolex</Option>
+        <Option value="Omega">Omega</Option>
+        <Option value="Seiko">Seiko</Option>
+        <Option value="Cartier">Cartier</Option>
+        <Option value="IWC">IWC</Option>
+        <Option value="Zenith">Zenith</Option>
+      </Select>
+      <b style={{ marginBottom: "5px" }}>Price range: </b>
+      <Slider
+        range
+        value={tempPriceRange}
+        marks={marks}
+        step={50000}
+        min={0}
+        max={5000000}
+        onChange={handleTempPriceRangeChange}
+        style={{ marginBottom: 40, width: 650 }}
+      />
+      <Button
+        type="primary"
+        onClick={handleFilterClick}
+        style={{ width: "20%", marginBottom: "15px" }}
+      >
+        Filter
+      </Button>
       <Select
         defaultValue="Sort by price"
         style={{ width: 170, marginBottom: 20 }}
@@ -104,18 +170,6 @@ const WatchFilter = () => {
           { value: "descending", label: "Highest to lowest" },
         ]}
       />
-      <span>Price range :</span>
-      <Slider
-        range
-        defaultValue={[0, 5000000]}
-        marks={marks}
-        step={50000}
-        min={0}
-        max={5000000}
-        onChange={handlePriceRangeChange}
-        style={{ marginBottom: 40, width: 650 }}
-      />
-
       <div
         style={{
           padding: 24,
@@ -126,7 +180,7 @@ const WatchFilter = () => {
       >
         <h1>{type} Watches</h1>
         <Row gutter={[16, 16]}>
-          {watches.filter(filterWatchesByPriceRange).map((watch) => (
+          {watches.map((watch) => (
             <Col key={watch.id} span={24}>
               <Card
                 style={{ backgroundColor: "#e3cbcb" }}

@@ -8,7 +8,6 @@ import Loading from "./Loading";
 import Rating from "./Rating";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
-import { useCart } from "../Context/CartContext";
 import useAuth from "./Hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
@@ -28,16 +27,13 @@ const thumbnailStyle = {
 const WatchDetail = () => {
   let { id } = useParams();
   const [watchData, setWatchData] = useState(null);
-  const [sellerName, setSellerName] = useState(null);
-  const [appraiserName, setAppraiserName] = useState(null);
-
+  const [sellerData, setSellerData] = useState(null);
+  const [appraiserData, setAppraiserData] = useState(null);
   const [appraisalData, setAppraisalData] = useState(null);
-
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
   const { auth } = useAuth();
-  const { state: cartState, dispatch } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,18 +55,12 @@ const WatchDetail = () => {
           const appraiserResponse = await axios.get(
             `http://localhost:8080/api/v1/user/${appraisalResponse.data.appraiserId}`
           );
-          setAppraiserName(
-            appraiserResponse.data.firstName +
-              " " +
-              appraiserResponse.data.lastName
-          );
+          setAppraiserData(appraiserResponse.data);
         }
         const sellerResponse = await axios.get(
           `http://localhost:8080/api/v1/user/${response.data.sellerId}`
         );
-        setSellerName(
-          sellerResponse.data.firstName + " " + sellerResponse.data.lastName
-        );
+        setSellerData(sellerResponse.data);
       } catch (error) {
         console.error("Error fetching watch details: ", error);
       } finally {
@@ -99,39 +89,31 @@ const WatchDetail = () => {
     }
   };
 
-  const addToCart = () => {
+  const addToCart = async () => {
     if (auth) {
-      const isCurrentUserSeller = auth.id === watchData.sellerId;
-      if (isCurrentUserSeller) {
-        return message.info("Cannot add your own item!");
-      }
-      const itemInCart = cartState.cartItems.find(
-        (item) => item.id === watchData.id
-      );
-      const itemsFromDifferentSeller = cartState.cartItems.some(
-        (item) => item.sellerId !== watchData.sellerId
-      );
-
-      if (itemInCart) {
-        message.info("This item is already in your cart.");
-      } else if (itemsFromDifferentSeller) {
-        message.info(
-          "You cannot add items from different sellers to the cart."
-        );
-      } else {
-        dispatch({
-          type: "ADD_TO_CART",
-          payload: {
-            id: watchData.id,
-            name: watchData.name,
-            price: watchData.price,
-            brand: watchData.brand,
-            image: watchData.imageUrl[0],
-            sellerId: watchData.sellerId,
-            sellerName: sellerName,
+      try {
+        const cartItem = {
+          watch: {
+            id: watchData.id, // Ensure only the watch ID is sent
           },
-        });
+        };
+        const response = await axios.post(
+          `http://localhost:8080/api/v1/cart/${auth.id}`,
+          cartItem,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }
+        );
         message.success("Added to cart successfully!");
+      } catch (error) {
+        if (error.response && error.response.data.message) {
+          message.error(error.response.data.message);
+        } else {
+          message.error("Failed to add to cart.");
+        }
       }
     } else {
       message.info("You have to log in first!");
@@ -142,6 +124,13 @@ const WatchDetail = () => {
   if (loading) {
     return <Loading />;
   }
+
+  const isCurrentUserSeller = auth?.id === watchData.sellerId;
+  const showAddToCartButton =
+    watchData.status === true &&
+    watchData.appraisalId !== null &&
+    watchData.paid === false &&
+    !isCurrentUserSeller;
 
   return (
     <Content
@@ -209,30 +198,37 @@ const WatchDetail = () => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <Text strong style={{ fontSize: "16px" }}>
-              Posted:{" "}
+              Posted since:{" "}
             </Text>
             <Text style={{ fontSize: "16px" }}>
-              {getTimeSincePost(watchData.postDate)}
+              {getTimeSincePost(watchData.createdDate)}
             </Text>
           </div>
           <div style={{ marginBottom: "10px" }}>
             <Text style={{ fontSize: "16px" }}>
               Seller:{" "}
-              <Link to={`/user/${watchData.sellerId}`}>{sellerName}</Link>
+              <Link to={`/user/${sellerData.id}`}>
+                {sellerData.firstName + " " + sellerData.lastName}
+              </Link>
             </Text>
             {" ("}
-            <Rating score={watchData?.seller?.rating}></Rating>
+            <Rating score={sellerData.rating}></Rating>
             {")"}
           </div>
           <div style={{ marginBottom: "10px" }}>
             <Text strong style={{ fontSize: "16px" }}>
               Appraised by:{" "}
             </Text>
-            <Text style={{ fontSize: "16px" }}>{appraiserName}</Text>
+            <Text style={{ fontSize: "16px" }}>
+              {appraiserData.firstName + " " + appraiserData.lastName}
+            </Text>
+            <Rating score={appraiserData?.rating}></Rating>
           </div>
-          <Button type="primary" onClick={addToCart}>
-            Add to Cart <FontAwesomeIcon size="lg" icon={faCartShopping} />
-          </Button>
+          {showAddToCartButton && (
+            <Button type="primary" onClick={addToCart}>
+              Add to Cart <FontAwesomeIcon size="lg" icon={faCartShopping} />
+            </Button>
+          )}
         </Col>
       </Row>
       <div className="watch-description">
@@ -250,20 +246,16 @@ const WatchDetail = () => {
             </Col>
 
             <Col span={8}>
-              <span className="attribute">Year of production: </span> <br></br>
-              <span>{appraisalData.yearOfProduction}</span>
-            </Col>
-            <Col span={8}>
               <span className="attribute">Material: </span> <br></br>
               <span>{appraisalData.material}</span>
             </Col>
-          </Row>
-          <Row className="row">
             <Col span={8}>
               <span className="attribute">Buckle</span>
               <br></br>
               <span>{appraisalData.buckle}</span>
             </Col>
+          </Row>
+          <Row className="row">
             <Col span={8}>
               <span className="attribute">Thickness </span> <br></br>
               <span>{appraisalData.thickness}</span>
@@ -272,12 +264,12 @@ const WatchDetail = () => {
               <span className="attribute">Dial </span> <br></br>
               <span>{appraisalData.dial}</span>
             </Col>
-          </Row>
-          <Row className="row">
             <Col span={8}>
               <span className="attribute">Movement </span> <br></br>
               <span>{appraisalData.movement}</span>
             </Col>
+          </Row>
+          <Row className="row">
             <Col span={8}>
               <span className="attribute">Crystal </span> <br></br>
               <span>{appraisalData.crystal}</span>
